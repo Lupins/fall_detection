@@ -179,11 +179,12 @@ def extract_from_video(file_name):
             # print('g_shape: ' + str(aux.shape) + ' ' + str(aux.dtype))
 
             # print('Extracting ' + str(i))
-            start_time = time.time()
-            # n_frame = extract_saliency(n_frame, i)
-            end_time = time.time()
+            if i == 0:
+                start_time = time.time()
+                n_frame = extract_saliency(n_frame, i)
+                end_time = time.time()
 
-            # print('Time: ' + str(end_time - start_time))
+                print('Time: ' + str(end_time - start_time))
 
             n_frame = resize_frame(n_frame, 224, 224)
             out.write(n_frame)
