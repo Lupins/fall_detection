@@ -11,6 +11,7 @@ from matplotlib import pylab as P
 import pickle
 import cv2
 import saliency
+from nets import inception_v3
 slim = tf.contrib.slim
 
 # IMPORTS ---------------------------------------------------------------------
@@ -31,29 +32,29 @@ INCEPTION_URL = 'http://download.tensorflow.org/models/inception_v3_2016_08_28.t
 
 # SETUP FUNCTION --------------------------------------------------------------
 
-# def add_logit_tensor(ckpt_file):
+def add_logit_tensor(ckpt_file):
 
-    # graph = tf.Graph()
+    graph = tf.Graph()
 
-    # with graph.as_default():
-        # IMAGES = tf.placeholder(tf.float32, shape=(None, 224, 224, 3))
+    with graph.as_default():
+        IMAGES = tf.placeholder(tf.float32, shape=(None, 224, 224, 3))
 
-        # with slim.arg_scope(inception_v3.inception_v3_arg_scope()):
-            # _, end_points = inception_v3.inception_v3(IMAGES, is_training=False, num_classes=1001)
+        with slim.arg_scope(inception_v3.inception_v3_arg_scope()):
+            _, end_points = inception_v3.inception_v3(IMAGES, is_training=False, num_classes=1001)
 
-            # # Restore the checkpoint
-            # sess = tf.Session(graph=graph)
-            # saver = tf.train.Saver()
-            # saver.restore(sess, ckpt_file)
+            # Restore the checkpoint
+            sess = tf.Session(graph=graph)
+            saver = tf.train.Saver()
+            saver.restore(sess, ckpt_file)
 
-        # # Construct the scalar neuron tensor
-        # logits = graph.get_tensor_by_name('InceptionV3/Logits/SpatialSqueeze:0')
-        # neuron_selector = tf.placeholder(tf.int32)
-        # y = logits[0][neuron_selector]
+        # Construct the scalar neuron tensor
+        logits = graph.get_tensor_by_name('InceptionV3/Logits/SpatialSqueeze:0')
+        neuron_selector = tf.placeholder(tf.int32)
+        y = logits[0][neuron_selector]
 
-        # # Construct tensor for predictions
-        # prediction = tf.argmax(logits, 1)
-        # return prediction
+        # Construct tensor for predictions
+        prediction = tf.argmax(logits, 1)
+        return prediction
 
 # If not present, fetches inception model graph from INCEPTION_URL and
 # extracts it to file: inception_v3.ckpt
@@ -65,7 +66,7 @@ def load_inception_model_graph(inception_url = INCEPTION_URL):
 
         # Download graph model from INCEPTION_URL
         print('Downloading inception model graph')
-        urllib.request.urlretrieve(housing_url, tgz_path)
+        urllib.request.urlretrieve(inception_url, tgz_path)
         print('Downloaded inception model graph')
 
         housing_tgz = tarfile.open(tgz_path) # Open downloaded file
@@ -73,8 +74,8 @@ def load_inception_model_graph(inception_url = INCEPTION_URL):
         housing_tgz.close() # Close file
 
     # Prepare return values
-    ckpt_file = './inception_v3.cpkt'
-    # prediction = add_logit_tensor(ckpt_file)
+    ckpt_file = './inception_v3.ckpt'
+    prediction = add_logit_tensor(ckpt_file)
 
     # return ckpt_file, prediction
 
@@ -92,6 +93,7 @@ def download_model():
     os.chdir('models/research/slim/') # Move current directory
     from nets import inception_v3
     os.chdir(old_cwd) # move to previous saved directory
+    print('Inception imported')
 
 # Set proper values to global variables
 def extractor_setup():

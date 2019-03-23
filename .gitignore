@@ -1,1 +1,6 @@
 *tags
+saliency_extractor/inception*
+saliency_extractor/models
+saliency_extractor/nets
+saliency_extractor/input
+saliency_extractor/output
