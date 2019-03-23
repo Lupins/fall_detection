@@ -207,6 +207,7 @@ def iterate_over_folder(path):
         extract_from_video(file)
 
 iterate_over_folder('input')
+
 # Load the image
 # ori = cv2.imread('/home/leite/Dropbox/entry.png')
 # im = LoadImage(ori)
