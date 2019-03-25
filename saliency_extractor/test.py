@@ -154,14 +154,14 @@ def extract_saliency(frame, i):
 def extract_from_video(file_name):
 
     video = cv2.VideoCapture('input/' + file_name)
-    fourcc = cv2.VideoWriter_fourcc(*'XVID')
+    fourcc = cv2.VideoWriter_fourcc(*'MPEG')
 
 # print('Video 5 '+ str(video.get(5)))
 # print('3 and 4 ' + str(video.get(3)) + ' ' + str(video.get(4)))
     width = int(video.get(3))
     height = int(video.get(4))
 # print('half: ' + str(width) + ' ' + str(int(width/2)) + ' ' + str(height))
-    out = cv2.VideoWriter('output/' + file_name, fourcc, video.get(5), (224, 224))
+    out = cv2.VideoWriter('output/' + file_name + '.avi', fourcc, video.get(5), (224, 224))
 # out = cv2.VideoWriter('output.avi', fourcc, video.get(5), (int(width/2), height))
 
     i = 0
@@ -179,12 +179,12 @@ def extract_from_video(file_name):
             # print('g_shape: ' + str(aux.shape) + ' ' + str(aux.dtype))
 
             # print('Extracting ' + str(i))
-            if i == 0:
-                start_time = time.time()
-                n_frame = extract_saliency(n_frame, i)
-                end_time = time.time()
+            # if i == 0:
+            start_time = time.time()
+            n_frame = extract_saliency(n_frame, i)
+            end_time = time.time()
 
-                print('Time: ' + str(end_time - start_time))
+            print('Time: ' + str(end_time - start_time))
 
             n_frame = resize_frame(n_frame, 224, 224)
             out.write(n_frame)
