@@ -170,6 +170,7 @@ def extract_from_video(file_name):
 
         if flag:
             # print('True ' + str(i))
+            print(file_name, 'frame:', i)
             i = i + 1
             n_frame = urfd_crop_depth_info(frame, width, height)
             n_frame = resize_frame(n_frame, 299, 299)
