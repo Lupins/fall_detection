@@ -207,6 +207,7 @@ def iterate_over_folder(path):
 
         print(str(file))
         extract_from_video(file)
+        os.remove('input/' + file)
 
 iterate_over_folder('input')
 
