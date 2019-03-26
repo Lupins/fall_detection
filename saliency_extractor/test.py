@@ -101,7 +101,7 @@ def urfd_crop_depth_info(frame, width, height):
 def resize_frame(frame, width, height):
     return cv2.resize(frame, (width, height), interpolation=cv2.INTER_LINEAR)
 
-def extract_saliency(frame, i):
+def extract_saliency(frame, file, i):
 
     frame = LoadImage(frame)
     # prediction_class = sess.run(prediction, feed_dict = {images: [frame]})[0]
@@ -147,7 +147,7 @@ def extract_saliency(frame, i):
     # print('Shape: ' + str(smoothgrad_mask_grayscale.shape) + ' ' + str(smoothgrad_mask_grayscale.dtype))
     smoothgrad_mask_grayscale = np.uint8(smoothgrad_mask_grayscale)
     # print('Shape: ' + str(smoothgrad_mask_grayscale.shape) + ' ' + str(smoothgrad_mask_grayscale.dtype))
-    # cv2.imwrite('output/output_' + str(i) + '.png', smoothgrad_mask_grayscale)
+    cv2.imwrite('output/' + file + str(i) + '.png', smoothgrad_mask_grayscale)
 
     return smoothgrad_mask_grayscale
     # cv2.imwrite('Output.png', smoothgrad_mask_grayscale)
@@ -171,7 +171,7 @@ def extract_from_video(file_name):
 
         if flag:
             # print('True ' + str(i))
-            print(file_name, 'frame:', i)
+            print(file_name, 'frame:', i , '/' , video.get(7))
             i = i + 1
             n_frame = urfd_crop_depth_info(frame, width, height)
             n_frame = resize_frame(n_frame, 299, 299)
@@ -183,7 +183,7 @@ def extract_from_video(file_name):
             # print('Extracting ' + str(i))
             # if i == 0:
             start_time = time.time()
-            n_frame = extract_saliency(n_frame, i)
+            n_frame = extract_saliency(n_frame, file_name, i)
             end_time = time.time()
 
             print('Time: ' + str(end_time - start_time))
