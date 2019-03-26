@@ -147,7 +147,7 @@ def extract_saliency(frame, file, i):
     # print('Shape: ' + str(smoothgrad_mask_grayscale.shape) + ' ' + str(smoothgrad_mask_grayscale.dtype))
     smoothgrad_mask_grayscale = np.uint8(smoothgrad_mask_grayscale)
     # print('Shape: ' + str(smoothgrad_mask_grayscale.shape) + ' ' + str(smoothgrad_mask_grayscale.dtype))
-    cv2.imwrite('output/' + file + str(i) + '.png', smoothgrad_mask_grayscale)
+    cv2.imwrite('output/' + file + '_' + str(format(i, '03d')) + '.png', smoothgrad_mask_grayscale)
 
     return smoothgrad_mask_grayscale
     # cv2.imwrite('Output.png', smoothgrad_mask_grayscale)
