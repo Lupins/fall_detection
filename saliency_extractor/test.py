@@ -104,7 +104,8 @@ def resize_frame(frame, width, height):
 def extract_saliency(frame, i):
 
     frame = LoadImage(frame)
-    prediction_class = sess.run(prediction, feed_dict = {images: [frame]})[0]
+    # prediction_class = sess.run(prediction, feed_dict = {images: [frame]})[0]
+    prediction_class = 1
 
     print("Prediction class: " + str(prediction_class))  # Should be a doberman, class idx = 237
 
@@ -146,7 +147,7 @@ def extract_saliency(frame, i):
     # print('Shape: ' + str(smoothgrad_mask_grayscale.shape) + ' ' + str(smoothgrad_mask_grayscale.dtype))
     smoothgrad_mask_grayscale = np.uint8(smoothgrad_mask_grayscale)
     # print('Shape: ' + str(smoothgrad_mask_grayscale.shape) + ' ' + str(smoothgrad_mask_grayscale.dtype))
-    # cv2.imwrite('Output_' + str(i) + '.png', smoothgrad_mask_grayscale)
+    cv2.imwrite('output/output_' + str(i) + '.png', smoothgrad_mask_grayscale)
 
     return smoothgrad_mask_grayscale
     # cv2.imwrite('Output.png', smoothgrad_mask_grayscale)
