@@ -93,6 +93,7 @@ with graph.as_default():
   # Construct tensor for predictions.
   prediction = tf.argmax(logits, 1)
 
+  integrated_gradients = saliency.IntegratedGradients(graph, sess, y, images)
 
 
 def urfd_crop_depth_info(frame, width, height):
@@ -103,54 +104,55 @@ def resize_frame(frame, width, height):
 
 def extract_saliency(frame, file, i):
 
-    frame = LoadImage(frame)
-    # prediction_class = sess.run(prediction, feed_dict = {images: [frame]})[0]
-    prediction_class = 1
+    with tf.Session() as sess:
+        frame = LoadImage(frame)
+        prediction_class = sess.run(prediction, feed_dict = {images: [frame]})[0]
+        # prediction_class = 1
 
-    print("Prediction class: " + str(prediction_class))  # Should be a doberman, class idx = 237
+        print("Prediction class: " + str(prediction_class))  # Should be a doberman, class idx = 237
 
 # Construct the saliency object. This doesn't yet compute the saliency mask, it just sets up the necessary ops.
-    integrated_gradients = saliency.IntegratedGradients(graph, sess, y, images)
+        # integrated_gradients = saliency.IntegratedGradients(graph, sess, y, images)
 
 # Baseline is a black image.
-    baseline = np.zeros(frame.shape)
-    baseline.fill(-1)
+        baseline = np.zeros(frame.shape)
+        baseline.fill(-1)
 
 # Compute the vanilla mask and the smoothed mask.
 # vanilla_integrated_gradients_mask_3d = integrated_gradients.GetMask(
 #   im, feed_dict = {neuron_selector: prediction_class}, x_steps=25, x_baseline=baseline)
 # Smoothed mask for integrated gradients will take a while since we are doing nsamples * nsamples computations.
-    smoothgrad_integrated_gradients_mask_3d = integrated_gradients.GetSmoothedMask(
-      frame, feed_dict = {neuron_selector: prediction_class}, x_steps=25, x_baseline=baseline)
+        smoothgrad_integrated_gradients_mask_3d = integrated_gradients.GetSmoothedMask(
+          frame, feed_dict = {neuron_selector: prediction_class}, x_steps=25, x_baseline=baseline)
 
 # Call the visualization methods to convert the 3D tensors to 2D grayscale.
 # vanilla_mask_grayscale = saliency.VisualizeImageGrayscale(vanilla_integrated_gradients_mask_3d)
-    smoothgrad_mask_grayscale = saliency.VisualizeImageGrayscale(smoothgrad_integrated_gradients_mask_3d)
+        smoothgrad_mask_grayscale = saliency.VisualizeImageGrayscale(smoothgrad_integrated_gradients_mask_3d)
 
 # Set up matplot lib figures.
-    ROWS = 1
-    COLS = 2
-    UPSCALE_FACTOR = 10
-    P.figure(figsize=(ROWS * UPSCALE_FACTOR, COLS * UPSCALE_FACTOR))
+        # ROWS = 1
+        # COLS = 2
+        # UPSCALE_FACTOR = 10
+        # P.figure(figsize=(ROWS * UPSCALE_FACTOR, COLS * UPSCALE_FACTOR))
 
 # Render the saliency masks.
 # ShowGrayscaleImage(vanilla_mask_grayscale, title='Vanilla Integrated Gradients', ax=P.subplot(ROWS, COLS, 1))
-    ShowGrayscaleImage(smoothgrad_mask_grayscale, title='Smoothgrad Integrated Gradients', ax=P.subplot(ROWS, COLS, 2))
+        # ShowGrayscaleImage(smoothgrad_mask_grayscale, title='Smoothgrad Integrated Gradients', ax=P.subplot(ROWS, COLS, 2))
 
 # vanilla_mask_grayscale *= (255 / vanilla_mask_grayscale.max())
-    smoothgrad_mask_grayscale *= (255 / smoothgrad_mask_grayscale.max())
+        smoothgrad_mask_grayscale *= (255 / smoothgrad_mask_grayscale.max())
 
 # temp_con = np.concatenate((vanilla_mask_grayscale, smoothgrad_mask_grayscale), axis=1)
 # temp_con = np.concatenate((temp_im, temp_con), axis=1)
 # result_con = np.concatenate((result_con, temp_con), axis=0)
 
-    # print('Shape: ' + str(smoothgrad_mask_grayscale.shape) + ' ' + str(smoothgrad_mask_grayscale.dtype))
-    smoothgrad_mask_grayscale = np.uint8(smoothgrad_mask_grayscale)
-    # print('Shape: ' + str(smoothgrad_mask_grayscale.shape) + ' ' + str(smoothgrad_mask_grayscale.dtype))
-    cv2.imwrite('output/' + file + '_' + str(format(i, '03d')) + '.png', smoothgrad_mask_grayscale)
+        # print('Shape: ' + str(smoothgrad_mask_grayscale.shape) + ' ' + str(smoothgrad_mask_grayscale.dtype))
+        smoothgrad_mask_grayscale = np.uint8(smoothgrad_mask_grayscale)
+        # print('Shape: ' + str(smoothgrad_mask_grayscale.shape) + ' ' + str(smoothgrad_mask_grayscale.dtype))
+        cv2.imwrite('output/' + file + '_' + str(format(i, '03d')) + '.png', smoothgrad_mask_grayscale)
 
-    return smoothgrad_mask_grayscale
-    # cv2.imwrite('Output.png', smoothgrad_mask_grayscale)
+        return smoothgrad_mask_grayscale
+        # cv2.imwrite('Output.png', smoothgrad_mask_grayscale)
 
 def extract_from_video(file_name):
 
