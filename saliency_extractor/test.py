@@ -93,7 +93,7 @@ with graph.as_default():
   # Construct tensor for predictions.
   prediction = tf.argmax(logits, 1)
 
-  integrated_gradients = saliency.IntegratedGradients(graph, sess, y, images)
+integrated_gradients = saliency.IntegratedGradients(graph, sess, y, images)
 
 
 def urfd_crop_depth_info(frame, width, height):
@@ -104,7 +104,7 @@ def resize_frame(frame, width, height):
 
 def extract_saliency(frame, file, i):
 
-    with tf.Session() as sess:
+    # with tf.Session() as sess:
         frame = LoadImage(frame)
         prediction_class = sess.run(prediction, feed_dict = {images: [frame]})[0]
         # prediction_class = 1
