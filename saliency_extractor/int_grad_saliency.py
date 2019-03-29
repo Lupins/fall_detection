@@ -91,7 +91,7 @@ def extract_saliency(image, method, images, sess):
 
     return grayscale_mask
 
-def extract_from_video(file_name, images, out_w = OUT_RES_W, out_h = OUT_RES_H):
+def extract_from_video(file_name, images, sess, out_w = OUT_RES_W, out_h = OUT_RES_H):
 
     # Open video file
     v_in = cv2.VideoCapture('input/' + file_name)
