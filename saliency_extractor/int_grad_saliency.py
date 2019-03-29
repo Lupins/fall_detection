@@ -48,31 +48,13 @@ graph = tf.Graph()
 
 # -----------------------------------------------------------------------------
 
-def extract_vanilla(image, images):
-    return extract_saliency(image, 0, images)
+def extract_vanilla(image, images, sess):
+    return extract_saliency(image, 0, images, sess)
 
-def extract_smooth(image, images):
-    return extract_saliency(image, 1, images)
+def extract_smooth(image, images, sess):
+    return extract_saliency(image, 1, images, sess)
 
-def extract_saliency(image, method, images):
-
-    # with graph.as_default():
-        # images = tf.placeholder(tf.float32, shape = (None, 299, 299, 3))
-
-        # with slim.arg_scope(inception_v3.inception_v3_arg_scope()):
-            # _, end_points = inception_v3.inception_v3(images,
-                                                      # is_training = False,
-                                                      # num_classes = 1001)
-
-    # Restore the checkpoint
-    sess = tf.Session(graph = graph)
-    saver = tf.train.Saver()
-    saver.restore(sess, ckpt_file)
-
-    # Construct the scalar neuron tensor
-    logits = graph.get_tensor_by_name('InceptionV3/Logits/SpatialSqueeze:0')
-    neuron_selector = tf.placeholder(tf.int32)
-    y = logits[0][neuron_selector]
+def extract_saliency(image, method, images, sess):
 
     prediction = tf.argmax(logits, 1)
 
@@ -172,9 +154,19 @@ def iterate_over_folder(path):
                                                       is_training = False,
                                                       num_classes = 1001)
 
+            # Restore the checkpoint
+            sess = tf.Session(graph = graph)
+            saver = tf.train.Saver()
+            saver.restore(sess, ckpt_file)
+
+            # Construct the scalar neuron tensor
+            logits = graph.get_tensor_by_name('InceptionV3/Logits/SpatialSqueeze:0')
+            neuron_selector = tf.placeholder(tf.int32)
+            y = logits[0][neuron_selector]
+
             for file in os.listdir(path):
 
-                extract_from_video(file, images)
+                extract_from_video(file, images, sess)
                 os.remove('input/' + file) # Delete file after it's been extracted
 
 # Boilerplate functions -------------------------------------------------------
