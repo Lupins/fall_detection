@@ -1,13 +1,18 @@
+import os
+import time
+import subprocess
+
 import tensorflow as tf
 import numpy as np
+import cv2
+
 import PIL.Image
 from matplotlib import pylab as P
 import pickle
-import os
-import cv2
-import subprocess
-import time
+
 import saliency
+
+import boiler_plate
 
 slim=tf.contrib.slim
 
@@ -22,6 +27,8 @@ os.chdir('models/research/slim')
 from nets import inception_v3
 
 os.chdir(old_cwd)
+
+# -----------------------------------------------------------------------------
 
 # Boilerplate methods.
 def ShowImage(im, title='', ax=None):
@@ -59,6 +66,8 @@ def LoadImage(frame):
   im = np.asarray(frame)
   return im / 127.5 - 1.0
 
+# -----------------------------------------------------------------------------
+
 # Use either wget or curl depending on your OS.
 if not os.path.exists('inception_v3.ckpt'):
   #!wget http://download.tensorflow.org/models/inception_v3_2016_08_28.tar.gz
@@ -70,6 +79,8 @@ if not os.path.exists('inception_v3.ckpt'):
         shell = True)
 
 ckpt_file = './inception_v3.ckpt'
+
+# -----------------------------------------------------------------------------
 
 graph = tf.Graph()
 
@@ -94,6 +105,7 @@ with graph.as_default():
 
 integrated_gradients = saliency.IntegratedGradients(graph, sess, y, images)
 
+# -----------------------------------------------------------------------------
 
 def urfd_crop_depth_info(frame, width, height):
     return frame[0:height, int(width / 2):width]
