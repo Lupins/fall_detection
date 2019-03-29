@@ -166,7 +166,7 @@ def iterate_over_folder(path):
 
             for file in os.listdir(path):
 
-                extract_from_video(file, images, sess, logit)
+                extract_from_video(file, images, sess, logits)
                 os.remove('input/' + file) # Delete file after it's been extracted
 
 # Boilerplate functions -------------------------------------------------------
