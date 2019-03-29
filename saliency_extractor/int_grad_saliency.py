@@ -128,8 +128,8 @@ def extract_from_video(file_name, images, sess, out_w = OUT_RES_W, out_h = OUT_R
 
             # Extract saliency and measure how long it took, in seconds
             start_time = time.time()
-            n_frame = extract_vanilla(n_frame, images)
-            # n_frame = extract_smooth(n_frame, images)
+            n_frame = extract_vanilla(n_frame, images, sess)
+            # n_frame = extract_smooth(n_frame, images, sess)
             end_time = time.time()
 
             print(str(format(end_time - start_time, '.2f')), 's')
