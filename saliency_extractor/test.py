@@ -1,4 +1,3 @@
-# Boilerplate imports.
 import tensorflow as tf
 import numpy as np
 import PIL.Image
@@ -8,6 +7,8 @@ import os
 import cv2
 import subprocess
 import time
+import saliency
+
 slim=tf.contrib.slim
 
 if not os.path.exists('models/research/slim'):
@@ -15,14 +16,12 @@ if not os.path.exists('models/research/slim'):
         'git clone https://github.com/tensorflow/models',
         shell = True)
 old_cwd = os.getcwd()
+
+# These two lines won't work outside of jupyter
 os.chdir('models/research/slim')
 from nets import inception_v3
+
 os.chdir(old_cwd)
-
-# From our repository.
-import saliency
-
-# %matplotlib inline
 
 # Boilerplate methods.
 def ShowImage(im, title='', ax=None):
@@ -106,10 +105,8 @@ def extract_saliency(frame, file, i):
 
     # with tf.Session() as sess:
         frame = LoadImage(frame)
+        print('prediction', type(prediction))
         prediction_class = sess.run(prediction, feed_dict = {images: [frame]})[0]
-        # prediction_class = 1
-
-        print("Prediction class: " + str(prediction_class))  # Should be a doberman, class idx = 237
 
 # Construct the saliency object. This doesn't yet compute the saliency mask, it just sets up the necessary ops.
         # integrated_gradients = saliency.IntegratedGradients(graph, sess, y, images)
