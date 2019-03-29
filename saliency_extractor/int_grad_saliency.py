@@ -48,13 +48,13 @@ graph = tf.Graph()
 
 # -----------------------------------------------------------------------------
 
-def extract_vanilla(image, images, sess, logits):
-    return extract_saliency(image, 0, images, sess, logits)
+def extract_vanilla(image, images, sess, logits, y):
+    return extract_saliency(image, 0, images, sess, logits, y)
 
-def extract_smooth(image, images, sess, logits):
-    return extract_saliency(image, 1, images, sess, logits)
+def extract_smooth(image, images, sess, logits, y):
+    return extract_saliency(image, 1, images, sess, logits, y)
 
-def extract_saliency(image, method, images, sess, logits):
+def extract_saliency(image, method, images, sess, logits, y):
 
     prediction = tf.argmax(logits, 1)
 
@@ -91,7 +91,7 @@ def extract_saliency(image, method, images, sess, logits):
 
     return grayscale_mask
 
-def extract_from_video(file_name, images, sess, logits, out_w = OUT_RES_W, out_h = OUT_RES_H):
+def extract_from_video(file_name, images, sess, logits, y, out_w = OUT_RES_W, out_h = OUT_RES_H):
 
     # Open video file
     v_in = cv2.VideoCapture('input/' + file_name)
@@ -128,8 +128,8 @@ def extract_from_video(file_name, images, sess, logits, out_w = OUT_RES_W, out_h
 
             # Extract saliency and measure how long it took, in seconds
             start_time = time.time()
-            n_frame = extract_vanilla(n_frame, images, sess, logits)
-            # n_frame = extract_smooth(n_frame, images, sess, logits)
+            n_frame = extract_vanilla(n_frame, images, sess, logits, y)
+            # n_frame = extract_smooth(n_frame, images, sess, logits, y)
             end_time = time.time()
 
             print(str(format(end_time - start_time, '.2f')), 's')
@@ -166,7 +166,7 @@ def iterate_over_folder(path):
 
             for file in os.listdir(path):
 
-                extract_from_video(file, images, sess, logits)
+                extract_from_video(file, images, sess, logits, y)
                 os.remove('input/' + file) # Delete file after it's been extracted
 
 # Boilerplate functions -------------------------------------------------------
