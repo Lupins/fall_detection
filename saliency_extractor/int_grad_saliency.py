@@ -87,8 +87,6 @@ def extract_saliency(image, method, images, sess, logits, y, neuron_selector):
     grayscale_mask *= (255 / gradients_mask_3d.max())
     grayscale_mask = np.uint8(grayscale_mask)
 
-    sess.close()
-
     return grayscale_mask
 
 def extract_from_video(file_name, images, sess, logits, y, neuron_selector, out_w = OUT_RES_W, out_h = OUT_RES_H):
