@@ -183,8 +183,10 @@ def iterate_over_folder(path):
 # Boilerplate functions -------------------------------------------------------
 
 def reset_graph():
-    global GRAPH
-    GRAPH = tf.Graph()
+    print('Reset')
+    tf.reset_default_graph()
+    # global GRAPH
+    # GRAPH = tf.Graph()
 
 def ShowImage(im, title='', ax=None):
   if ax is None:
