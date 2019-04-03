@@ -30,7 +30,12 @@ def edit_video(file_name):
 
             c_frame = urfd_crop_depth_info(frame, width, height)
             c_frame = resize_frame(c_frame, 224, 224)
+            c_frame = cv2.cvtColor(c_frame, cv2.COLOR_BGR2GRAY)
+            c_frame = cv2.cvtColor(c_frame, cv2.COLOR_GRAY2BGR)
 
+            print(type(c_frame))
+            print(c_frame.dtype)
+            print(c_frame.shape)
             v_out.write(c_frame)
 
         else:
@@ -39,4 +44,4 @@ def edit_video(file_name):
     v_in.release()
     v_out.release()
 
-edit_video('fall-01-cam0.mp4')
+edit_video('fall-07-cam0.mp4')
