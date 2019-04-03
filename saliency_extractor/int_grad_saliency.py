@@ -175,6 +175,7 @@ def iterate_over_folder(path):
                 # os.remove('input/' + file) # Delete file after it's been extracted
 
             extract_from_video(path, images, sess, logits, y, neuron_selector)
+            # os.remove('input/' + path)
 
 # Boilerplate functions -------------------------------------------------------
 
