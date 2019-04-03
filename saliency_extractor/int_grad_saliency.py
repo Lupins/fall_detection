@@ -143,10 +143,6 @@ def extract_from_video(file_name, images, sess, logits, y, neuron_selector, out_
 
             v_out.write(n_frame)
 
-            if i % 10 == 0 and i > 8:
-            # if True:
-                reset_graph()
-
         else:
             break
 
@@ -181,12 +177,6 @@ def iterate_over_folder(path):
             extract_from_video(path, images, sess, logits, y, neuron_selector)
 
 # Boilerplate functions -------------------------------------------------------
-
-def reset_graph():
-    print('Reset')
-    tf.reset_default_graph()
-    # global GRAPH
-    # GRAPH = tf.Graph()
 
 def ShowImage(im, title='', ax=None):
   if ax is None:
