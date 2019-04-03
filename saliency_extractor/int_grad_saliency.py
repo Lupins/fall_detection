@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import subprocess
 
@@ -44,7 +45,7 @@ if not os.path.exists('inception_v3.ckpt'):
 
 ckpt_file = './inception_v3.ckpt'
 
-graph = tf.Graph()
+GRAPH = tf.Graph()
 
 # -----------------------------------------------------------------------------
 
@@ -58,7 +59,7 @@ def extract_saliency(image, method, images, sess, logits, y, neuron_selector):
 
     prediction = tf.argmax(logits, 1)
 
-    integrated_gradients = saliency.IntegratedGradients(graph, sess, y, images)
+    integrated_gradients = saliency.IntegratedGradients(GRAPH, sess, y, images)
 
     image = LoadImage(image)
 
@@ -112,6 +113,9 @@ def extract_from_video(file_name, images, sess, logits, y, neuron_selector, out_
         # Read next frame
         flag, frame = v_in.read()
 
+        if i == 6:
+            break
+
         # Was frame read correctly?
         if flag:
 
@@ -134,7 +138,17 @@ def extract_from_video(file_name, images, sess, logits, y, neuron_selector, out_
 
             # Setup output frame and write it to video file
             n_frame = resize_frame(n_frame, out_w, out_h)
+
+            n_frame = cv2.cvtColor(n_frame, cv2.COLOR_GRAY2BGR)
+
+            print(type(n_frame))
+            print(n_frame.dtype)
+            print(n_frame.shape)
+
+
             v_out.write(n_frame)
+
+            reset_graph()
 
         else:
             break
@@ -144,7 +158,7 @@ def extract_from_video(file_name, images, sess, logits, y, neuron_selector, out_
 
 def iterate_over_folder(path):
 
-    with graph.as_default():
+    with GRAPH.as_default():
         images = tf.placeholder(tf.float32, shape = (None, 299, 299, 3))
 
         with slim.arg_scope(inception_v3.inception_v3_arg_scope()):
@@ -153,21 +167,28 @@ def iterate_over_folder(path):
                                                       num_classes = 1001)
 
             # Restore the checkpoint
-            sess = tf.Session(graph = graph)
+            sess = tf.Session(graph = GRAPH)
             saver = tf.train.Saver()
             saver.restore(sess, ckpt_file)
 
             # Construct the scalar neuron tensor
-            logits = graph.get_tensor_by_name('InceptionV3/Logits/SpatialSqueeze:0')
+            logits = GRAPH.get_tensor_by_name('InceptionV3/Logits/SpatialSqueeze:0')
             neuron_selector = tf.placeholder(tf.int32)
             y = logits[0][neuron_selector]
 
-            for file in os.listdir(path):
+            # for file in os.listdir(path):
 
-                extract_from_video(file, images, sess, logits, y, neuron_selector)
-                os.remove('input/' + file) # Delete file after it's been extracted
+                # extract_from_video(file, images, sess, logits, y, neuron_selector)
+                # os.remove('input/' + file) # Delete file after it's been extracted
+
+            extract_from_video(path, images, sess, logits, y, neuron_selector)
 
 # Boilerplate functions -------------------------------------------------------
+
+def reset_graph():
+    print("Reseting")
+
+    GRAPH = tf.Graph()
 
 def ShowImage(im, title='', ax=None):
   if ax is None:
@@ -213,4 +234,5 @@ def remove_extension_name(name):
     return name.split('.')[0]
 # -----------------------------------------------------------------------------
 
-iterate_over_folder('input')
+# iterate_over_folder('input')
+iterate_over_folder(sys.argv[1])
