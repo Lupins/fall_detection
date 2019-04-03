@@ -113,8 +113,8 @@ def extract_from_video(file_name, images, sess, logits, y, neuron_selector, out_
         # Read next frame
         flag, frame = v_in.read()
 
-        if i == 30:
-            break
+        # if i == 30:
+            # break
 
         # Was frame read correctly?
         if flag:
