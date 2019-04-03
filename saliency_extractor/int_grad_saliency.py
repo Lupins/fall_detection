@@ -143,8 +143,8 @@ def extract_from_video(file_name, images, sess, logits, y, neuron_selector, out_
 
             v_out.write(n_frame)
 
-            if i % 10 == 0:
-                GRAPH, logits, neuron_selector, y = reset_graph()
+            if i % 10 == 0 and i > 8:
+                reset_graph()
 
         else:
             break
@@ -182,14 +182,9 @@ def iterate_over_folder(path):
 # Boilerplate functions -------------------------------------------------------
 
 def reset_graph():
-    print("Reseting")
-
+    print(type(GRAPH))
     GRAPH = tf.Graph()
-    logits = GRAPH.get_tensor_by_name('InceptionV3/Logits/SpatialSqueeze:0')
-    neuron_selector = tf.placeholder(tf.int32)
-    y = logits[0][neuron_selector]
-
-    return GRAPH, logits, neuron_selector, y
+    print(type(GRAPH))
 
 def ShowImage(im, title='', ax=None):
   if ax is None:
