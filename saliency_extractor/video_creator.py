@@ -19,7 +19,7 @@ def edit_video(file_name):
     height = int(v_in.get(4))
 
     output_name = remove_extension_name(file_name)
-    v_out = cv2.VideoWriter('/home/leite/Dropbox/output/' + output_name + '.avi',
+    v_out = cv2.VideoWriter('output/' + output_name + '.avi',
                             fourcc, v_in.get(5), (224, 224))
 
     while(v_in.isOpened()):
