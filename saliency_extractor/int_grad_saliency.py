@@ -113,7 +113,7 @@ def extract_from_video(file_name, images, sess, logits, y, neuron_selector, out_
         # Read next frame
         flag, frame = v_in.read()
 
-        if i == 6:
+        if i == 20:
             break
 
         # Was frame read correctly?
@@ -140,11 +140,6 @@ def extract_from_video(file_name, images, sess, logits, y, neuron_selector, out_
             n_frame = resize_frame(n_frame, out_w, out_h)
 
             n_frame = cv2.cvtColor(n_frame, cv2.COLOR_GRAY2BGR)
-
-            print(type(n_frame))
-            print(n_frame.dtype)
-            print(n_frame.shape)
-
 
             v_out.write(n_frame)
 
