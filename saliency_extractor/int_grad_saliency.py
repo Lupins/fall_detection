@@ -93,7 +93,8 @@ def extract_saliency(image, method, images, sess, logits, y, neuron_selector):
 def extract_from_video(file_name, images, sess, logits, y, neuron_selector, out_w = OUT_RES_W, out_h = OUT_RES_H):
 
     # Open video file
-    v_in = cv2.VideoCapture('input/' + file_name)
+    # v_in = cv2.VideoCapture('input/' + file_name)
+    v_in = cv2.VideoCapture(file_name)
 
     # Fetch video's information
     width = int(v_in.get(3))
@@ -130,8 +131,8 @@ def extract_from_video(file_name, images, sess, logits, y, neuron_selector, out_
 
             # Extract saliency and measure how long it took, in seconds
             start_time = time.time()
-            n_frame = extract_vanilla(n_frame, images, sess, logits, y, neuron_selector)
-            # n_frame = extract_smooth(n_frame, images, sess, logits, y)
+            # n_frame = extract_vanilla(n_frame, images, sess, logits, y, neuron_selector)
+            n_frame = extract_smooth(n_frame, images, sess, logits, y, neuron_selector)
             end_time = time.time()
 
             print(str(format(end_time - start_time, '.2f')), 's')
@@ -175,7 +176,7 @@ def iterate_over_folder(path):
                 # os.remove('input/' + file) # Delete file after it's been extracted
 
             extract_from_video(path, images, sess, logits, y, neuron_selector)
-            os.remove('input/' + path)
+            # os.remove('input/' + path)
 
 # Boilerplate functions -------------------------------------------------------
 
@@ -220,8 +221,10 @@ def resize_frame(frame, width, height):
     return cv2.resize(frame, (width, height), interpolation=cv2.INTER_LINEAR)
 
 def remove_extension_name(name):
-    return name.split('.')[0]
+    name = name.split('.')[0]
+    name = name.split('/')[1]
+    return name
 # -----------------------------------------------------------------------------
 
 # iterate_over_folder('input')
-iterate_over_folder(sys.argv[1])
+iterate_over_folder(str(sys.argv[1]))
