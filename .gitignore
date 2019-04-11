@@ -1,10 +1,13 @@
 *tags
 *tags.lock
 .circleci
-saliency_extractor/inception*
+*.ckpt
+
 saliency_extractor/models
 saliency_extractor/nets
 saliency_extractor/input
-saliency_extractor/urfd
 saliency_extractor/output
-saliency_extractor/URFD_cropped
+
+saliency_extractor/urfd/urfd/
+saliency_extractor/urfd/urfd_cropped/
+saliency_extractor/urfd/urfd_frames/
