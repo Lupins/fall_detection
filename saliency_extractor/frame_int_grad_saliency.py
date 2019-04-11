@@ -104,8 +104,8 @@ def extract_from_image(file_name, images, sess, logits, y, neuron_selector, out_
     # TODO Verify wether keep proportion is important
     img_in = resize_img(img_in, 299, 299)
 
-    img_in = extract_vanilla(img_in, images, sess, logits, y, neuron_selector)
-    # img_in = extract_smooth(img_in, images, sess, logits, y, neuron_selector)
+    # img_in = extract_vanilla(img_in, images, sess, logits, y, neuron_selector)
+    img_in = extract_smooth(img_in, images, sess, logits, y, neuron_selector)
 
     # Setup output frame and write it to video file
     img_in = resize_img(img_in, out_w, out_h)
