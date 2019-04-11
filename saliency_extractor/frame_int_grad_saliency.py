@@ -96,7 +96,7 @@ def extract_saliency(image, method, images, sess, logits, y, neuron_selector):
 def extract_from_image(file_name, images, sess, logits, y, neuron_selector, out_w = OUT_RES_W, out_h = OUT_RES_H):
 
     # Open image file
-    img_in = cv2.imread(IN_FOLDER + file_name)
+    img_in = cv2.imread(file_name)
 
     # Fetch video's information
     width, height, channels = img_in.shape
@@ -117,6 +117,7 @@ def extract_from_image(file_name, images, sess, logits, y, neuron_selector, out_
 
 def remove_extension_name(name):
     name = name.split('.')[0]
+    name = name.split('/')[1]
     return name
 
 def main(file_name):
@@ -147,7 +148,7 @@ def main(file_name):
             end_time = time.time()
             print(str(format(end_time - start_time, '.2f')), 's')
 
-            os.remove('input/' + file_name)
+            os.remove(file_name)
 
 # Boilerplate functions -------------------------------------------------------
 
