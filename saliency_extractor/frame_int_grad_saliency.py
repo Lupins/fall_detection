@@ -105,7 +105,7 @@ def extract_from_image(file_name, images, sess, logits, y, neuron_selector, out_
     img_in = resize_img(img_in, 299, 299)
 
     # n_frame = extract_vanilla(n_frame, images, sess, logits, y, neuron_selector)
-    n_frame = extract_smooth(img_in, images, sess, logits, y, neuron_selector)
+    img_in = extract_smooth(img_in, images, sess, logits, y, neuron_selector)
 
     # Setup output frame and write it to video file
     img_in = resize_img(img_in, out_w, out_h)
