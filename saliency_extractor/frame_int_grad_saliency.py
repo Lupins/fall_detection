@@ -112,7 +112,12 @@ def extract_from_image(file_name, images, sess, logits, y, neuron_selector, out_
 
     # img_in = cv2.cvtColor(img_in, cv2.COLOR_GRAY2BGR)
 
-    cv2.imwrite('output/' + file_name, img_in)
+    file_name = remove_extension_name(file_name)
+    cv2.imwrite('output/' + file_name + '.png', img_in)
+
+def remove_extension_name(name):
+    name = name.split('.')[0]
+    return name
 
 def main(file_name):
 
