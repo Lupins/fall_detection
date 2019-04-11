@@ -191,10 +191,6 @@ def urfd_crop_depth_info(frame, width, height):
 def resize_img(frame, width, height):
     return cv2.resize(frame, (width, height), interpolation=cv2.INTER_LINEAR)
 
-def remove_extension_name(name):
-    name = name.split('.')[0]
-    name = name.split('/')[1]
-    return name
 # -----------------------------------------------------------------------------
 
 # iterate_over_folder('input')
