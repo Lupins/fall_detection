@@ -2,12 +2,9 @@
 *tags.lock
 .circleci
 *.ckpt
+*.avi
+*.mp4
+*.png
 
 saliency_extractor/models
 saliency_extractor/nets
-saliency_extractor/input
-saliency_extractor/output
-
-saliency_extractor/urfd/urfd/
-saliency_extractor/urfd/urfd_cropped/
-saliency_extractor/urfd/urfd_frames/
