@@ -41,7 +41,7 @@ def extract_frames(path, video):
 # Create the proper output file name
 def form_file_name(str, i_frame):
     str = str.split('.')[0]
-    str = str + '_' + format(i_frame, '04d')
+    str = str + '-' + format(i_frame, '04d')
     return str
 
 # Remove the nested path and extension from the entry file name
