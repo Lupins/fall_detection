@@ -7,3 +7,4 @@ saliency_extractor/nets
 saliency_extractor/input
 saliency_extractor/urfd
 saliency_extractor/output
+saliency_extractor/URFD_cropped
