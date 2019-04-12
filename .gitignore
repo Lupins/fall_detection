@@ -1,5 +1,4 @@
-*tags
-*tags.lock
+tags*
 .circleci
 *.ckpt
 *.avi
