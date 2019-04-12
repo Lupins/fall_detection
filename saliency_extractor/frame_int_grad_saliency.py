@@ -96,7 +96,7 @@ def extract_saliency(image, method, images, sess, logits, y, neuron_selector):
 def extract_from_image(file_name, images, sess, logits, y, neuron_selector, out_w = OUT_RES_W, out_h = OUT_RES_H):
 
     # Open image file
-    img_in = cv2.imread(IN_FOLDER + file_name)
+    img_in = cv2.imread(file_name)
 
     # Fetch video's information
     width, height, channels = img_in.shape
@@ -112,7 +112,13 @@ def extract_from_image(file_name, images, sess, logits, y, neuron_selector, out_
 
     # img_in = cv2.cvtColor(img_in, cv2.COLOR_GRAY2BGR)
 
-    cv2.imwrite('output/' + file_name, img_in)
+    file_name = remove_extension_name(file_name)
+    cv2.imwrite('output/' + file_name + '.png', img_in)
+
+def remove_extension_name(name):
+    name = name.split('.')[0]
+    name = name.split('/')[1]
+    return name
 
 def main(file_name):
 
@@ -142,7 +148,7 @@ def main(file_name):
             end_time = time.time()
             print(str(format(end_time - start_time, '.2f')), 's')
 
-            os.remove('input/' + file_name)
+            os.remove(file_name)
 
 # Boilerplate functions -------------------------------------------------------
 
@@ -186,10 +192,6 @@ def urfd_crop_depth_info(frame, width, height):
 def resize_img(frame, width, height):
     return cv2.resize(frame, (width, height), interpolation=cv2.INTER_LINEAR)
 
-def remove_extension_name(name):
-    name = name.split('.')[0]
-    name = name.split('/')[1]
-    return name
 # -----------------------------------------------------------------------------
 
 # iterate_over_folder('input')
