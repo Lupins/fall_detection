@@ -1,3 +1,7 @@
+'''
+Exports a video into several images, one for each frame.
+Used in the saliency extractor, which works frame by frame, efficiency issues
+'''
 import os
 import sys
 import cv2

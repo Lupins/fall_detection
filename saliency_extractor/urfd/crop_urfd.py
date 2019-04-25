@@ -1,3 +1,6 @@
+'''
+Crops URFD videos in half, removing the depth information
+'''
 import os
 import sys
 import cv2
