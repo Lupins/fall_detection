@@ -1,4 +1,6 @@
-# Extracts saliency of an input image
+'''
+Extracts the saliency of one frame, given as entry
+'''
 import os
 import sys
 import time
