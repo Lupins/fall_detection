@@ -1,5 +1,11 @@
 *tags
 *tags.lock
+*.avi
+*.mp4
+*.png
+*.jpg
+*.h5
+
 saliency_extractor/inception*
 saliency_extractor/models
 saliency_extractor/nets
