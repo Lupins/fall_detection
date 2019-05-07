@@ -6,9 +6,24 @@ import sys
 import cv2
 import numpy
 
+POSITIVE_CLASS = 'Fall'
+NEGATIVE_CLASS = 'NotFall'
 WIDTH = 224
 HEIGHT = 224
 FPS = 30
+
+def iterate_class_folder(db_folder, extension, p_class = POSITIVE_CLASS, n_class = NEGATIVE_CLASS):
+
+	# Positive class
+    v_folders = os.listdir(db_folder + '/' + p_class)
+    for folder in v_folders:
+		print(folder)
+        #setup_video_output(db_folder, folder, out_folder, extension)
+
+	# Negative class
+	v_folders = os.listdir(db_folder + '/' + n_class)
+    for folder in v_folders:
+        #create_video_from_frames(in_folder, folder, out_folder, extension)
 
 def remove_extension_name(name):
     return name.split('.')[0]
@@ -47,13 +62,6 @@ def edit_video(file_name):
     v_in.release()
     v_out.release()
 
-def iterate_urfd_folder(in_folder, out_folder, extension):
-
-    folders = os.listdir(in_folder)
-    for folder in folders:
-        create_video_from_frames(in_folder, folder, out_folder, extension)
-        # break
-
 def create_video_from_frames(path, folder, out_folder, extension, width = WIDTH,
                              height = HEIGHT, fps = FPS):
 
@@ -79,7 +87,7 @@ def iterate_images_folder(output, path, folder, extension):
     return output
 
 
-def main(img_folder, out_folder, extension):
-    iterate_urfd_folder(img_folder, out_folder, extension)
+def main(db_folder, extension):
+    iterate_class_folder(db_folder, extension)
 
 main(str(sys.argv[1]), str(sys.argv[2]), str(sys.argv[3]))
