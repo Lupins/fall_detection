@@ -1,7 +1,13 @@
 #!/bin/bash
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 for f in input/*
+do
+  python frame_int_grad_saliency.py $f
+=======
+=======
+>>>>>>> 66c7e669d4f5d6235c5f6b6a32ee5f1cfdabfebf
 #for f in input/*
 #do
   #python int_grad_saliency.py $f | cut -f2 -d"/"
@@ -12,5 +18,8 @@ for f in input/*
 for f in input/*
 do
   python int_grad_saliency.py $f
+<<<<<<< HEAD
+>>>>>>> 66c7e669d4f5d6235c5f6b6a32ee5f1cfdabfebf
+=======
 >>>>>>> 66c7e669d4f5d6235c5f6b6a32ee5f1cfdabfebf
 done
