@@ -1,10 +1,7 @@
 *tags
 *tags.lock
-*.avi
-*.mp4
-*.png
-*.jpg
 *.h5
+*.ipynb_checkpoints
 
 saliency_extractor/inception*
 saliency_extractor/models
