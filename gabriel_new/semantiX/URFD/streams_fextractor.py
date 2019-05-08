@@ -130,7 +130,7 @@ class Fextractor:
         elif stream == 'depth':
             file_name = '/depth_*.jpg'
         elif stream == 'saliency':
-            file_name = '/saliency_*.jpg'
+            file_name = '/saliency_*.png'
         else:
             print("INVALID STREAM ERROR")
             print("VALIDS STREAMS: {temporal, spatial, pose}")
@@ -144,12 +144,18 @@ class Fextractor:
             #        hardcoded and will be expanded really soon. Its being \
             #        used inside Extracting Features for, setting label value")
             #    exit(1)
-
+            
+            #DEBUG
+            print('CLASS NUM', c)
             for dir in self.classes_dirs[c]:
 
+                print(type(dir))
+                print(dir)
+                print(data_folder + self.classes[c] + '/' + dir + '/saliency_*.png')
                 check_size = glob.glob(data_folder + self.classes[c] + '/' +
-                                  dir + '/flow_x*.jpg')
+                                  dir + '/saliency_*.png')
 
+                print('LEN', len(check_size))
                 self.data = glob.glob(data_folder + self.classes[c] + '/' +
                                   dir + file_name)
 
@@ -157,6 +163,9 @@ class Fextractor:
                     # search with cam is being used in this dir
                     # dir is something like: chute01cam2 or chute01cam2_00
                     num_class[-1] += 1
+
+                    #DEBUG
+                    print('##', data_folder, self.classes[c])
                     self.folders.append(data_folder + self.classes[c] + '/' + dir)
                     dirs.append(dir)
                     self.class_value.append(self.classes[c])
@@ -185,6 +194,10 @@ class Fextractor:
 
         print("### Extracting Features", flush=True)
         for folder, dir, classe in zip(self.folders, dirs, self.class_value):
+            
+            #DEBUG
+            print('**', folder)
+            
             self.update_progress(cont/self.nb_total_data)
 
             self.data_images = glob.glob(folder + file_name)
