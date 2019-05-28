@@ -115,7 +115,7 @@ def extract_from_image(file_name, images, sess, logits, y, neuron_selector, out_
     # img_in = cv2.cvtColor(img_in, cv2.COLOR_GRAY2BGR)
 
     file_name = remove_extension_name(file_name)
-    cv2.imwrite('output/' + file_name + '.png', img_in)
+    cv2.imwrite('output/saliency_' + file_name + '.png', img_in)
 
 def remove_extension_name(name):
     print('*', name)
