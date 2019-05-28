@@ -118,9 +118,11 @@ def extract_from_image(file_name, images, sess, logits, y, neuron_selector, out_
     cv2.imwrite('output/' + file_name + '.png', img_in)
 
 def remove_extension_name(name):
+    print('*', name)
     name = name.split('.')[0]
-    name = name.split('/')[1]
-    return name
+    number = name.split('_')[2]
+    name = name.split('/')[2]
+    return 'saliency_' + name + '_' + number
 
 def main(file_name):
 
