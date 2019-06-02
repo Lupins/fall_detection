@@ -1,3 +1,7 @@
+'''
+Extracts the saliency from video files, its not worth it since the graph behind
+it gets so big that the execution time increases from frame to frame
+'''
 import os
 import sys
 import time

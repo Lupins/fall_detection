@@ -1,3 +1,6 @@
+'''
+TODO document this file
+'''
 import cv2
 import numpy
 

@@ -1,3 +1,6 @@
+'''
+TODO document this file
+'''
 import sys
 
 def iterate_videos(video, mask):

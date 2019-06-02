@@ -39,7 +39,6 @@ class Visual_Rythm_extractor:
         self.fall_dirs = []
         self.class_value = []
 
-
     def extract(self, data_folder, window):
 
         self.get_dirs(data_folder)
@@ -59,7 +58,6 @@ class Visual_Rythm_extractor:
             #sucess, frame1 = cap.read( )
             #print (sucess)
             length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-            print( length )
             width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)   # float
             height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT) # float
             #print (width)
@@ -67,7 +65,7 @@ class Visual_Rythm_extractor:
             hor_vr = np.array([]).reshape(0,int(width),3)
             ver_vr = np.array([]).reshape(0,int(height),3)
             #window = 10 
-            count = 0
+            count = 1
             for fi in range (0,(length+1)-window):
                 #print (fi)
                 foward = True
@@ -80,14 +78,13 @@ class Visual_Rythm_extractor:
                 self.vr (video, width, height, hor_vr, ver_vr, fi, window, path, foward, count)
                 count = count + 1
                 
-
     def vr (self, video, width, height, hor_vr, ver_vr, fi, window, path, foward, count):
         cap = cv2.VideoCapture(video)
         
         if foward == True:
             ff = fi + window
             for fr in range(fi,ff):
-                print (fr)
+                #print (fr)
                 #print (fr+10)
                 cap.set(1,fr);
                 ret, img = cap.read()
@@ -113,7 +110,7 @@ class Visual_Rythm_extractor:
             ff = (fi + 1) - window
             #print (ff)
             for fr in range(fi,ff-1,-1):
-                print (fr)
+                #print (fr)
                 #print (fr-10)
                 cap.set(1,fr);
                 ret, img = cap.read()
@@ -138,39 +135,13 @@ class Visual_Rythm_extractor:
 
         hor_vr = hor_vr.astype(np.uint8)
         ver_vr = ver_vr.astype(np.uint8)
-        print (hor_vr.shape)
-        print (ver_vr.shape)
-        print (':::::path:::::::')
-        ph = path + '/ritmo_0000'+str(count)+'_h.jpg'
-        pv = path + '/ritmo_0000'+str(count)+'_v.jpg'
-        print (ph)
-        print (pv)
-        cv2.imwrite(ph, hor_vr)
-        cv2.imwrite(pv, ver_vr)
-        try:
-            self.rescale_VR(ph, pv, path)
-        except cv2.error as e:
-            print ("Check dimensions")
-        cap.release()
-        cv2.destroyAllWindows()
-
-    def rescale_VR(self, ph, pv, path): 
-
-        im1 = cv2.imread(ph)
-        im2 = cv2.imread(pv)
-
-        img1 = cv2.resize(im1,(224,224))
-        img2 = cv2.resize(im2,(224,224))
-        #for i in range (1,11,2):
-        #    ph1 = path + '/ritmo_0000'+ str(i) + '.jpg'
-        #    pv1 = path + '/ritmo_0000'+ str(i + 1) + '.jpg'
-        #    cv2.imwrite(ph1, img1)
-        #    cv2.imwrite(pv1, img2)
+        ph = path + '/ritmo_'+str(count).zfill(5)+'_h.jpg'
+        pv = path + '/ritmo_'+str(count).zfill(5)+'_v.jpg'
+        img1 = cv2.resize(np.asarray(hor_vr), (224, 224))
         cv2.imwrite(ph, img1)
-        cv2.imwrite(pv, img2)
-
-            
-        
+    
+        cap.release()
+        #cv2.destroyAllWindows()
 
     def get_dirs(self, data_folder):
 
@@ -193,21 +164,16 @@ if __name__ == '__main__':
     print("***********************************************************",
             file=sys.stderr)
     argp = argparse.ArgumentParser(description='Do feature extraction tasks')
-
     argp.add_argument("-data", dest='data_folder', type=str, nargs=1, 
             help='Usage: -data <path_to_your_data_folder>', required=True)
-
     argp.add_argument("-class", dest='classes', type=str, nargs='+', 
             help='Usage: -class <class0_name> <class1_name>..<n-th_class_name>',
             required=True)
-
     argp.add_argument("-mean", dest='input_mean', type=int, nargs=1, 
             help='Usage: -mean <vr_mean> ', required=False)
-
     argp.add_argument("-extension", dest='extension', type=str, nargs='+',
             help='Usage: -extension <video_extension_type>',
             required=True)
-
     argp.add_argument("-window", dest='window', type=int, nargs=1,
             help='Usage: -window <sliding_window_size>',
             required=True)
