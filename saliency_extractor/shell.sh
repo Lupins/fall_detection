@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for folder in fdd/NotFalls/*
+for folder in URFD/NotFalls/*
 do
   test="$folder/frame"
   for f in $test*

@@ -114,15 +114,21 @@ def extract_from_image(file_name, images, sess, logits, y, neuron_selector, out_
 
     # img_in = cv2.cvtColor(img_in, cv2.COLOR_GRAY2BGR)
 
+    folder_name = file_name.split('/')[2]
+    try:
+        os.mkdir('output/' + folder_name)
+    except:
+        print(folder_name, 'already created')
     file_name = remove_extension_name(file_name)
-    cv2.imwrite('output/saliency_' + file_name + '.png', img_in)
+    cv2.imwrite('output/' + folder_name + '/saliency_' + file_name + '.png', img_in)
+    print(folder_name, file_name)
 
 def remove_extension_name(name):
-    print('*', name)
     name = name.split('.')[0]
-    number = name.split('_')[2]
-    name = name.split('/')[2]
-    return 'saliency_' + name + '_' + number
+    number = name.split('_')[1]
+    name = name.split('/')[3]
+    # return 'saliency_' + name + '_' + number
+    return 'frame_' + str(number)
 
 def main(file_name):
 
@@ -152,7 +158,7 @@ def main(file_name):
             end_time = time.time()
             print(str(format(end_time - start_time, '.2f')), 's')
 
-            os.remove(file_name)
+            # os.remove(file_name)
 
 # Boilerplate functions -------------------------------------------------------
 
