@@ -6,17 +6,17 @@ import cv2
 import glob
 import os
 
-SNAPSHOT_FILE = "/home/leite/workspace/weights/inception_v3_imagenet_urfd.ckpt"
-PRETRAINED_SNAPSHOT_FILE = "/home/leite/workspace/weights/inception_v3.ckpt"
+SNAPSHOT_FILE = "/workspace/weights/inception_v3_imagenet_urfd.ckpt"
+PRETRAINED_SNAPSHOT_FILE = "/workspace/weights/inception_v3.ckpt"
 
-TENSORBOARD_DIR = "/home/leite/workspace/tb_logdir/"
+TENSORBOARD_DIR = "/workspace/tb_logdir/"
 
 IMG_WIDTH, IMG_HEIGHT = [299, 299]
 N_CHANNELS = 3
 N_CLASSES = 2
 
-P_CLASS_PATH = ""
-N_CLASS_PATH = ""
+P_CLASS_PATH = "/mnt/Data/URFD/Falls/"
+N_CLASS_PATH = "/mnt/Data/URFD/NotFalls/"
 
 graph = tf.Graph()
 with graph.as_default():
