@@ -133,9 +133,11 @@ Y_train = []
 
 load_data()
 
+print(len(X_train), ' entries ', len(Y_train), ' labels')
+
 with tf.Session(graph=graph) as sess:
     n_epochs = 500
-    print_every = 100
+    print_every = 10
     batch_size = 1024 # small batch size so inception v3 can be run on laptops
     steps_per_epoch = len(X_train)//batch_size
 
