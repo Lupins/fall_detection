@@ -110,35 +110,52 @@ def initialize_vars(session):
         session.run(tf.global_variables_initializer())
         tf_pretrained_saver.restore(session, PRETRAINED_SNAPSHOT_FILE)
 
-def load_data():
+def load_data_path():
 
     class_path = P_CLASS_PATH
     for folder in os.listdir(class_path):
         for file in glob.glob(class_path + folder + '/frame_*'):
-            img = cv2.imread(file)
-            img = cv2.resize(img, (299, 299), interpolation=cv2.INTER_LINEAR)
-            X_train.append(img)
+            X_train.append(file)
             Y_train.append(0)
+            # img = cv2.imread(file)
+            # img = cv2.resize(img, (299, 299), interpolation=cv2.INTER_LINEAR)
+            # X_train.append(img)
+            # Y_train.append(0)
 
     class_path = N_CLASS_PATH
     for folder in os.listdir(class_path):
         for file in glob.glob(class_path + folder + '/frame_*'):
-            img = cv2.imread(file)
-            img = cv2.resize(img, (299, 299), interpolation=cv2.INTER_LINEAR)
-            X_train.append(img)
+            X_train.append(file)
             Y_train.append(1)
+            # img = cv2.imread(file)
+            # img = cv2.resize(img, (299, 299), interpolation=cv2.INTER_LINEAR)
+            # X_train.append(img)
+            # Y_train.append(1)
+
+def load_images(begin, end):
+    aux_file = []
+    aux_label = []
+
+    for file in range(begin, end):
+        img = cv2.imread(X_train[file])
+        img = cv2.resize(img, (299, 299), interpolation=cv2.INTER_LINEAR)
+        aux_file.append(img)
+        aux_label.append(Y_train[file])
+
+
+    return aux_file, aux_label
 
 X_train = []
 Y_train = []
 
-load_data()
+load_data_path()
 
 print(len(X_train), ' entries ', len(Y_train), ' labels')
 
 with tf.Session(graph=graph) as sess:
     n_epochs = 500
     print_every = 10
-    batch_size = 1024 # small batch size so inception v3 can be run on laptops
+    batch_size = 32 # small batch size so inception v3 can be run on laptops
     steps_per_epoch = len(X_train)//batch_size
 
     initialize_vars(session=sess)
@@ -149,8 +166,9 @@ with tf.Session(graph=graph) as sess:
         print("----------------------------------------------")
         for step in range(steps_per_epoch):
             # EXTRACT A BATCH OF TRAINING DATA
-            X_batch = X_train[batch_size*step: batch_size*(step+1)]
-            Y_batch = Y_train[batch_size*step: batch_size*(step+1)]
+            X_batch, Y_batch = load_images(batch_size*step, batch_size*(step+1))
+            # X_batch = X_train[batch_size*step: batch_size*(step+1)]
+            # Y_batch = Y_train[batch_size*step: batch_size*(step+1)]
 
             # RUN ONE TRAINING STEP - feeding batch of data
             feed_dict = {tf_X: X_batch,
