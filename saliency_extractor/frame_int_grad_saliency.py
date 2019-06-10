@@ -39,16 +39,17 @@ os.chdir(old_cwd)
 # -----------------------------------------------------------------------------
 
 # Use either wget or curl depending on your OS.
-if not os.path.exists('inception_v3.ckpt'):
-  #!wget http://download.tensorflow.org/models/inception_v3_2016_08_28.tar.gz
-    return_code = subprocess.call(
-        'curl -O http://download.tensorflow.org/models/inception_v3_2016_08_28.tar.gz',
-        shell = True)
+# if not os.path.exists('inception_v3.ckpt'):
+  # #!wget http://download.tensorflow.org/models/inception_v3_2016_08_28.tar.gz
+    # return_code = subprocess.call(
+        # 'curl -O http://download.tensorflow.org/models/inception_v3_2016_08_28.tar.gz',
+        # shell = True)
 
-    return_code = subprocess.call('tar -xvzf inception_v3_2016_08_28.tar.gz',
-        shell = True)
+    # return_code = subprocess.call('tar -xvzf inception_v3_2016_08_28.tar.gz',
+        # shell = True)
 
-ckpt_file = './inception_v3.ckpt'
+ckpt_meta_file = '/mnt/inception_v3_imagenet_urfd.ckpt.meta'
+ckpt_file = '/workspace/weights/inception_v3.ckpt'
 
 GRAPH = tf.Graph()
 
@@ -146,6 +147,7 @@ def main(file_name):
             # Restore the checkpoint
             sess = tf.Session(graph = GRAPH)
             saver = tf.train.Saver()
+            saver = tf.train.import_meta_graph(ckpt_meta_file)
             saver.restore(sess, ckpt_file)
 
             # Construct the scalar neuron tensor

@@ -6,7 +6,7 @@ import cv2
 import glob
 import os
 
-SNAPSHOT_FILE = "/workspace/weights/inception_v3_imagenet_urfd.ckpt"
+SNAPSHOT_FILE = "/mnt/inception_v3_imagenet_urfd.ckpt"
 PRETRAINED_SNAPSHOT_FILE = "/workspace/weights/inception_v3.ckpt"
 
 TENSORBOARD_DIR = "/workspace/tb_logdir/"
@@ -137,6 +137,9 @@ def load_images(begin, end):
     aux_label = []
 
     for file in range(begin, end):
+        if end > len(X_train):
+            end = len(X_train)
+
         img = cv2.imread(X_train[file])
         img = cv2.resize(img, (299, 299), interpolation=cv2.INTER_LINEAR)
         aux_file.append(img)
@@ -154,8 +157,8 @@ print(len(X_train), ' entries ', len(Y_train), ' labels')
 
 with tf.Session(graph=graph) as sess:
     n_epochs = 500
-    print_every = 10
-    batch_size = 32 # small batch size so inception v3 can be run on laptops
+    print_every = 20
+    batch_size = 10 # small batch size so inception v3 can be run on laptops
     steps_per_epoch = len(X_train)//batch_size
 
     initialize_vars(session=sess)

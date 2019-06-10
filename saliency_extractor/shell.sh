@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for folder in URFD/NotFalls/*
+for folder in /mnt/Data/URFD/temp-leite/Falls/*
 do
   test="$folder/frame"
   for f in $test*
