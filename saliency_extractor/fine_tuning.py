@@ -6,17 +6,17 @@ import cv2
 import glob
 import os
 
-SNAPSHOT_FILE = "/mnt/inception_v3_imagenet_urfd.ckpt"
-PRETRAINED_SNAPSHOT_FILE = "/workspace/weights/inception_v3.ckpt"
+SNAPSHOT_FILE = "/home/leite/workspace/weights/inception_v3_imagenet_urfd.ckpt"
+PRETRAINED_SNAPSHOT_FILE = "/home/leite/workspace/weights/inception_v3.ckpt"
 
-TENSORBOARD_DIR = "/workspace/tb_logdir/"
+TENSORBOARD_DIR = "/home/leite/workspace/tb_logdir/"
 
 IMG_WIDTH, IMG_HEIGHT = [299, 299]
 N_CHANNELS = 3
 N_CLASSES = 2
 
-P_CLASS_PATH = "/mnt/Data/URFD/Falls/"
-N_CLASS_PATH = "/mnt/Data/URFD/NotFalls/"
+P_CLASS_PATH = "/home/leite/Dropbox/aws/urfd/Falls/"
+N_CLASS_PATH = "/home/leite/Dropbox/aws/urfd/notfalls/"
 
 graph = tf.Graph()
 with graph.as_default():
@@ -156,7 +156,11 @@ load_data_path()
 print(len(X_train), ' entries ', len(Y_train), ' labels')
 
 with tf.Session(graph=graph) as sess:
-    n_epochs = 500
+    ops = sess.graph.get_operations()
+    for op in ops:
+        print(op)
+
+    n_epochs = 1
     print_every = 20
     batch_size = 10 # small batch size so inception v3 can be run on laptops
     steps_per_epoch = len(X_train)//batch_size

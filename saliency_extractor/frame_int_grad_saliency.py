@@ -21,8 +21,6 @@ slim=tf.contrib.slim
 OUT_RES_W = 224
 OUT_RES_H = 224
 
-IN_FOLDER = 'input/'
-
 # Download inception model ----------------------------------------------------
 if not os.path.exists('models/research/slim'):
     return_code = subprocess.call(
@@ -48,8 +46,11 @@ os.chdir(old_cwd)
     # return_code = subprocess.call('tar -xvzf inception_v3_2016_08_28.tar.gz',
         # shell = True)
 
-ckpt_meta_file = '/mnt/inception_v3_imagenet_urfd.ckpt.meta'
-ckpt_file = '/workspace/weights/inception_v3.ckpt'
+# ckpt_meta_file = '/mnt/inception_v3_imagenet_urfd.ckpt.meta'
+ckpt_meta_file = '/home/leite/workspace/weights/inception_v3_imagenet_urfd.ckpt.meta'
+
+# ckpt_file = '/workspace/weights/inception_v3.ckpt'
+ckpt_file = '/home/leite/workspace/weights/inception_v3_imagenet_urfd.ckpt'
 
 GRAPH = tf.Graph()
 
@@ -139,10 +140,12 @@ def main(file_name):
     with GRAPH.as_default():
         images = tf.placeholder(tf.float32, shape = (None, 299, 299, 3))
 
+        # with tf.name_scope('opt'):
+        print('****', type(inception_v3.inception_v3_arg_scope()))
         with slim.arg_scope(inception_v3.inception_v3_arg_scope()):
             _, end_points = inception_v3.inception_v3(images,
                                                       is_training = False,
-                                                      num_classes = 1001)
+                                                      num_classes = 2)
 
             # Restore the checkpoint
             sess = tf.Session(graph = GRAPH)
