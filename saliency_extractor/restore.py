@@ -38,11 +38,12 @@ def load_image():
     # image = cv.imread('/home/leite/Pictures/tinca.jpg')
     # image = cv.imread('/home/leite/Pictures/adl-01-cam0/frame_00001.jpg')
     image = []
-    for i in range(100, 151):
-        frame = cv.imread('/home/leite/Pictures/adl-01-cam0/frame_00' + str(i) + '.jpg')
-        # frame = cv.imread('/home/leite/Pictures/fall-01-cam0/frame_000' + str(i) + '.jpg')
+    # for i in range(100, 151):
+    for i in range(10, 31):
+        # frame = cv.imread('/home/leite/Pictures/adl-01-cam0/frame_00' + str(i) + '.jpg')
+        frame = cv.imread('/home/leite/Pictures/fall-01-cam0/frame_000' + str(i) + '.jpg')
         frame = cv.resize(frame, (299, 299))
-        print(np.max(frame))
+        # print(np.max(frame))
         image.append(frame)
     return image
 
