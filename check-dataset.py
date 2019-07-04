@@ -19,6 +19,10 @@ def main(path):
             frames = os.listdir(path + '/' + _class + '/' + video)
             frames.sort()
             print(video + ': ' + str(len(frames)))
-            # for frame in frames:
-                # print(frame)
+            for i in range(1, len(frames)+1):
+                j = "{:03d}".format(i)
+                for frame in frames:
+                    if j in frame:
+                        print(frame)
+
 main(sys.argv[1])
