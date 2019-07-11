@@ -1,5 +1,6 @@
 import os
 import sys
+import glob
 
 def main(path):
 
@@ -14,15 +15,38 @@ def main(path):
         videos.sort()
         for video in videos:
 
-            # print(video)
-            # video001_frame_001
-            frames = os.listdir(path + '/' + _class + '/' + video)
-            frames.sort()
-            print(video + ': ' + str(len(frames)))
-            for i in range(1, len(frames)+1):
-                j = "{:03d}".format(i)
-                for frame in frames:
-                    if j in frame:
-                        print(frame)
+            frames = glob.glob(path + '/' + _class + '/' + video + '/frame*')
+            s_frames = glob.glob(path + '/' + _class + '/' + video + '/saliency*')
+            frames.sort(reverse=True)
+            s_frames.sort(reverse=True)
+
+            for idx in range(len(frames)):
+                frame = frames[idx]
+
+                frame_idx = frame.split('_')[-1]
+                frame_idx = frame_idx.split('.')[0]
+
+                # print(frame.split('/')[-1], end='\t')
+                flag = False
+                for s_frame in frames:
+                    if frame_idx in s_frame:
+                        # print(s_frame.split('/')[-1])
+                        flag = True
+
+                if flag == False:
+                    print(frame.split('/')[-1], '\t*')
+
+
+            # for idx in range(len(s_frames)):
+                # frame = frames[idx]
+                # s_frame = s_frames[idx]
+
+                # print('From: ' + s_frame)
+                # frame_idx = s_frame.split('_')[-1]
+                # frame_idx = frame_idx.split('.')[0]
+                # frame_idx = int(frame_idx)
+
+                # print('To: ' + path + '/' + _class + '/' + video + '/saliency_' + ("{:05d}".format(len(s_frames)-idx)) + '.jpg')
+                # os.rename(s_frame, path + '/' + _class + '/' + video + '/saliency_' + ("{:05d}".format(len(s_frames)-idx)) + '.jpg')
 
 main(sys.argv[1])
