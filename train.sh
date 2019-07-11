@@ -1,0 +1,1 @@
+python train.py -actions cross-train -stream spatial temporal saliency -class Falls NotFalls -thresh 0.5 -ep 500 -lr 0.0001 -w0 1 -mini_batch 32 -id FDD -batch_norm True -nsplits 5 | tee fdd_train.txt
