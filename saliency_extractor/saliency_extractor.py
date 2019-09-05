@@ -101,20 +101,17 @@ with tf.device('/cpu:0'):
     # Construct the saliency object. This doesn't yet compute the saliency mask, it just sets up the necessary ops.
     integrated_gradients = saliency.IntegratedGradients(graph, sess, y, images)
 
-    print('1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111')
     # Baseline is a black image.
     baseline = np.zeros(im.shape)
     baseline.fill(-1)
 
     # Smoothed mask for integrated gradients will take a while since we are doing nsamples * nsamples computations.
     smoothgrad_integrated_gradients_mask_3d = integrated_gradients.GetSmoothedMask(
-      im, feed_dict = {neuron_selector: prediction_class}, x_steps=25, x_baseline=baseline)
+      im, feed_dict = {neuron_selector: prediction_class}, x_steps=20, x_baseline=baseline)
 
-    print('222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222')
     # Call the visualization methods to convert the 3D tensors to 2D grayscale.
     smoothgrad_mask_grayscale = saliency.VisualizeImageGrayscale(smoothgrad_integrated_gradients_mask_3d)
 
-    print('33333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333')
     im = smoothgrad_mask_grayscale * 255
     im = cv2.resize(im, (224, 224))
 
