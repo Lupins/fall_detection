@@ -14,23 +14,23 @@ from sklearn.metrics import confusion_matrix
 import itertools
 import matplotlib.pyplot as plt
 
-train_path = 'cats-and-dogs/train'
-valid_path = 'cats-and-dogs/valid'
-test_path = 'cats-and-dogs/test'
+train_path = '/mnt/Data/leite/test-keras-vgg16/train'
+valid_path = '/mnt/Data/leite/test-keras-vgg16/valid'
+test_path =  '/mnt/Data/leite/test-keras-vgg16/test'
 
 train_batches = ImageDataGenerator().flow_from_directory(train_path,
                                                          target_size=(224, 224),
-                                                         classes=['dog', 'cat'],
+                                                         classes=['Falls', 'NotFalls'],
                                                          batch_size=10)
 
 valid_batches = ImageDataGenerator().flow_from_directory(valid_path,
                                                          target_size=(224, 224),
-                                                         classes=['dog', 'cat'],
+                                                         classes=['Falls', 'NotFalls'],
                                                          batch_size=4)
 
 test_batches = ImageDataGenerator().flow_from_directory(test_path,
                                                          target_size=(224, 224),
-                                                         classes=['dog', 'cat'],
+                                                         classes=['Falls', 'NotFalls'],
                                                          batch_size=10)
 
 ''' VGG16 '''
