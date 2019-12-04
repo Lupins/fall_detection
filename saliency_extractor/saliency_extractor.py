@@ -9,6 +9,7 @@ import os
 import sys
 import time
 import cv2
+import subprocess
 slim=tf.contrib.slim
 
 if not os.path.exists('models/research/slim'):
@@ -61,7 +62,7 @@ def LoadImage(file_path):
 
 ckpt_file = './inception_v3.ckpt'
 
-with tf.device('/cpu:0'):
+with tf.device('/GPU:0'):
     graph = tf.Graph()
 
     with graph.as_default():
@@ -128,5 +129,6 @@ with tf.device('/cpu:0'):
     for i in folder:
         path = path + i + '/'
 
+    print('SAVING: ' + path + file_name)
     cv2.imwrite(path + file_name, im)
     print('TIME:', end-start)

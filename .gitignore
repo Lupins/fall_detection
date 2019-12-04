@@ -1,6 +1,7 @@
 *tags
 *tags.lock
 *.h5
+*.pkl
 *.ipynb_checkpoints
 
 saliency_extractor/inception*

@@ -6,7 +6,7 @@ import numpy as np
 import h5py
 from sklearn.metrics import confusion_matrix, accuracy_score
 from keras.layers import Input, Activation, Dense, Dropout
-from keras.layers.normalization import BatchNormalization 
+from keras.layers.normalization import BatchNormalization
 from keras.optimizers import Adam
 from keras.models import Model, load_model
 from keras.layers.advanced_activations import ELU
@@ -14,15 +14,15 @@ import matplotlib
 matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 
-''' This code is based on Núñez-Marcos, A., Azkune, G., & Arganda-Carreras, 
+''' This code is based on Núñez-Marcos, A., Azkune, G., & Arganda-Carreras,
     I. (2017). "Vision-Based Fall Detection with Convolutional Neural Networks"
     Wireless Communications and Mobile Computing, 2017.
-    Also, new features were added by Gabriel Pellegrino Silva working in 
-    Semantix. 
+    Also, new features were added by Gabriel Pellegrino Silva working in
+    Semantix.
 '''
 
 ''' Documentation: class Result
-    
+
     This class has a few methods:
 
     pre_result
@@ -40,7 +40,7 @@ class Result:
 
     def __init__(self, classes, threshold, fid, cid):
 
-        self.features_key = 'features' 
+        self.features_key = 'features'
         self.labels_key = 'labels'
         self.samples_key = 'samples'
         self.num_key = 'num'
@@ -65,9 +65,9 @@ class Result:
         self.all_labels = np.asarray(h5labels[self.labels_key])
 
         predicteds = []
-        
+
         for data in self.all_features:
-            pred = classifier.predict(np.asarray(data.reshape(1, -1)))
+            pred = self.classifier.predict(np.asarray(data.reshape(1, -1)))
             predicteds.append(np.argmax(pred))
 
         return self.all_features, self.all_labels, predicteds
@@ -107,7 +107,7 @@ class Result:
         accuracy = accuracy_score(truth, predicted)
 
         print('TP: {}, TN: {}, FP: {}, FN: {}'.format(tp,tn,fp,fn))
-        print('TPR: {}, TNR: {}, FPR: {}, FNR: {}'.format(tpr,tnr,fpr,fnr))   
+        print('TPR: {}, TNR: {}, FPR: {}, FNR: {}'.format(tpr,tnr,fpr,fnr))
         print('Sensitivity/Recall: {}'.format(recall))
         print('Specificity: {}'.format(specificity))
         print('Precision: {}'.format(precision))
@@ -124,23 +124,23 @@ class Result:
             len_STACK = len(Y)
             Truth = Y
             predicted = np.asarray(predicted.flat)
-            predicteds.append(np.copy(predicted)) 
+            predicteds.append(np.copy(predicted))
 
         cont_predicteds = np.zeros(len_STACK, dtype=np.float)
-                   
+
         if f_classif == 'thresh':
             for j in range(len(cont_predicteds)):
                 for i in range(len(streams)):
-                    cont_predicteds[j] += predicteds[i][j] 
+                    cont_predicteds[j] += predicteds[i][j]
 
                 cont_predicteds[j] /= (len(streams))
 
             self.check_videos(Truth, cont_predicteds, streams[0])
-            
+
         elif f_classif == 'svm_avg':
             for j in range(len(cont_predicteds)):
                 for i in range(len(streams)):
-                    cont_predicteds[j] += predicteds[i][j] 
+                    cont_predicteds[j] += predicteds[i][j]
 
                 cont_predicteds[j] /= (len(streams))
 
@@ -172,7 +172,7 @@ class Result:
         all_num = [y for x in all_num for y in x]
         for amount_videos in all_num:
             cl = self.classes[class_c]
-            message = '###### ' + cl + ' videos ' + str(amount_videos)+' ######' 
+            message = '###### ' + cl + ' videos ' + str(amount_videos)+' ######'
             print(message)
             for num_video in range(amount_videos):
                 num_miss = 0
@@ -188,7 +188,7 @@ class Result:
                         else:
                             FP += 1
                         num_miss+=1
-                    
+
                 if num_miss == 0:
                     print("Hit video    %3d  [%5d miss  %5d stacks  %5d FP  %5d FN]" %(num_video+1, num_miss, all_samples[video_c+num_video][0], FP, FN))
                 else:
@@ -216,7 +216,7 @@ if __name__ == '__main__':
             file=sys.stderr)
 
     argp = argparse.ArgumentParser(description='Do result  tasks')
-    argp.add_argument("-class", dest='classes', type=str, nargs='+', 
+    argp.add_argument("-class", dest='classes', type=str, nargs='+',
             help='Usage: -class <class0_name> <class1_name>..<n-th_class_name>',
             required=True)
     argp.add_argument("-streams", dest='streams', type=str, nargs='+',
@@ -225,13 +225,13 @@ if __name__ == '__main__':
     argp.add_argument("-thresh", dest='thresh', type=float, nargs=1,
             help='Usage: -thresh <x> (0<=x<=1)', required=True)
     argp.add_argument("-fid", dest='fid', type=str, nargs=1,
-        help='Usage: -id <identifier_to_features>', 
+        help='Usage: -id <identifier_to_features>',
         required=True)
     argp.add_argument("-cid", dest='cid', type=str, nargs=1,
-        help='Usage: -id <identifier_to_classifier>', 
+        help='Usage: -id <identifier_to_classifier>',
         required=True)
     argp.add_argument("-f_classif", dest='f_classif', type=str, nargs=1,
-        help='Usage: -f_classif <thresh> or <svm_avg> or <svm_cont>', 
+        help='Usage: -f_classif <thresh> or <svm_avg> or <svm_cont>',
         required=True)
 
     try:

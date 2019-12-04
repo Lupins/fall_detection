@@ -13,7 +13,7 @@ import h5py
 from sklearn.metrics import confusion_matrix, accuracy_score
 from keras import backend as K
 from keras.layers import Input, Activation, Dense, Dropout
-from keras.layers.normalization import BatchNormalization 
+from keras.layers.normalization import BatchNormalization
 from keras.optimizers import Adam
 from keras.models import Model, load_model
 from keras.utils import to_categorical
@@ -24,15 +24,15 @@ import itertools
 matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 
-''' This code is based on Núñez-Marcos, A., Azkune, G., & Arganda-Carreras, 
+''' This code is based on Núñez-Marcos, A., Azkune, G., & Arganda-Carreras,
     I. (2017). "Vision-Based Fall Detection with Convolutional Neural Networks"
     Wireless Communications and Mobile Computing, 2017.
-    Also, new features were added by Gabriel Pellegrino Silva working in 
-    Semantix. 
+    Also, new features were added by Gabriel Pellegrino Silva working in
+    Semantix.
 '''
 
 ''' Documentation: class Train
-    
+
     This class has a few methods:
 
     pre_train_cross
@@ -51,7 +51,7 @@ from matplotlib import pyplot as plt
 '''
 class Train:
 
-    def __init__(self, threshold, epochs, learning_rate, 
+    def __init__(self, threshold, epochs, learning_rate,
     classes, weight, mini_batch_size, id, batch_norm):
 
         '''
@@ -59,7 +59,7 @@ class Train:
 
         '''
 
-        self.features_key = 'features' 
+        self.features_key = 'features'
         self.labels_key = 'labels'
         self.samples_key = 'samples'
         self.num_key = 'num'
@@ -76,7 +76,7 @@ class Train:
         self.learning_rate = learning_rate
         self.weight_0 = weight
         self.mini_batch_size = mini_batch_size
-        self.batch_norm = batch_norm 
+        self.batch_norm = batch_norm
 
 ###     Number of streams for each combination
 
@@ -103,14 +103,14 @@ class Train:
         self.fars_avg = dict()
         self.mdrs_avg = dict()
         self.accuracies_avg = dict()
-                    
+
         self.sensitivities_avg_svm = dict()
         self.specificities_avg_svm = dict()
         self.fars_avg_svm = dict()
         self.mdrs_avg_svm = dict()
         self.accuracies_avg_svm = dict()
 
-    def calc_metrics(self, num_streams, y_test, y_train, test_predicteds, 
+    def calc_metrics(self, num_streams, y_test, y_train, test_predicteds,
                     train_predicteds, key):
 
         avg_predicted = np.zeros(len(y_test), dtype=np.float)
@@ -119,19 +119,19 @@ class Train:
 
         for j in range(len(y_test)):
             for i in range(num_streams):
-                avg_predicted[j] += test_predicteds[i][j] 
-            
+                avg_predicted[j] += test_predicteds[i][j]
+
             avg_predicted[j] /= (num_streams)
 
         for j in range(len(y_train)):
             for i in range(num_streams):
-                train_avg_predicted[j] += train_predicteds[i][j] 
+                train_avg_predicted[j] += train_predicteds[i][j]
 
             train_avg_predicted[j] /= (num_streams)
-         
+
         for j in range(len(y_train)):
             clf_train_predicteds[j] = [item[j] for item in train_predicteds]
-        
+
 ####
 ####        TREINAMENTO COM TRESHOLD E MEDIA
 ####
@@ -153,17 +153,17 @@ class Train:
 ####
 ####        TREINAMENTO COM MEDIA E SVM
 ####
-        
+
         class_weight = dict()
         for i in range(len(self.classes)):
             class_weight[i] = 1
-                
-        clf_avg = svm.SVC(class_weight=class_weight, gamma='auto') 
+
+        clf_avg = svm.SVC(class_weight=class_weight, gamma='auto')
         clf_avg.fit(train_avg_predicted.reshape(-1, 1), y_train)
         for i in range(len(avg_predicted)):
             avg_predicted[i] = clf_avg.predict(avg_predicted[i].reshape(-1, 1))
 
-        joblib.dump(clf_avg, 'svm_avg.pkl') 
+        joblib.dump(clf_avg, 'svm_avg.pkl')
 
         del clf_avg
         gc.collect()
@@ -176,7 +176,7 @@ class Train:
         self.fars_avg_svm[key].append(fpr)
         self.mdrs_avg_svm[key].append(fnr)
         self.accuracies_avg_svm[key].append(accuracy)
-        
+
         print('TRAIN WITH average and SVM')
         tpr, fpr, fnr, tnr, precision, recall, specificity, f1, accuracy = self.evaluate(train_avg_predicted, y_train)
         self.taccuracies_avg_svm[key].append(accuracy)
@@ -189,26 +189,26 @@ class Train:
         clf_continuous = svm.SVC(class_weight=class_weight, gamma='auto')
 
         clf_continuous.fit(clf_train_predicteds, y_train)
-       
+
         avg_continuous = np.array(avg_predicted, copy=True)
         avg_train_continuous = np.array(train_avg_predicted, copy=True)
 
         for i in range(len(avg_continuous)):
             avg_continuous[i] = clf_continuous.predict(np.asarray([item[i] for item in test_predicteds]).reshape(1, -1))
-        
+
         for i in range(len(avg_train_continuous)):
             avg_train_continuous[i] = clf_continuous.predict(np.asarray([item[i] for item in train_predicteds]).reshape(1, -1))
 
-        joblib.dump(clf_continuous, 'svm_cont.pkl') 
+        joblib.dump(clf_continuous, 'svm_cont.pkl')
         print('EVALUATE WITH continuous values and SVM')
         tpr, fpr, fnr, tnr, precision, recall, specificity, f1, accuracy = self.evaluate(avg_continuous, y_test)
-        
+
         self.sensitivities_svm[key].append(recall)
         self.specificities_svm[key].append(specificity)
         self.fars_svm[key].append(fpr)
         self.mdrs_svm[key].append(fnr)
         self.accuracies_svm[key].append(accuracy)
-        
+
         print('TRAIN WITH continuous values and SVM')
         tpr, fpr, fnr, tnr, precision, recall, specificity, f1, accuracy = self.evaluate(avg_train_continuous, y_train)
         self.taccuracies_svm[key].append(accuracy)
@@ -233,7 +233,7 @@ class Train:
             labels_start_index.append(len(labels[-1]) + atual)
             print("Labels da classe " + self.classes[i]+ " ", end='')
             print(labels[-1])
-        
+
         streams_combinations = []
         for L in range(0, len(streams)+1):
             for subset in itertools.combinations(streams, L):
@@ -242,7 +242,7 @@ class Train:
 
         for comb in streams_combinations:
             key = ''.join(comb)
-            
+
             self.num_streams[key] = len(comb)
 
             self.taccuracies_avg[key] = []
@@ -260,7 +260,7 @@ class Train:
             self.fars_avg[key] = []
             self.mdrs_avg[key] = []
             self.accuracies_avg[key] = []
-                        
+
             self.sensitivities_avg_svm[key] = []
             self.specificities_avg_svm[key] = []
             self.fars_avg_svm[key] = []
@@ -284,13 +284,13 @@ class Train:
 
                     train_index_label.append(a)
                     test_index_label.append(b)
-                    
+
                     break
                 print("Valores de train ", end='')
                 print(a, len(a))
                 print("Valores de test ", end='')
                 print(b, len(b))
-           
+
             #train_index_label.sort()
             #test_index_label.sort()
             for stream in streams:
@@ -299,7 +299,7 @@ class Train:
                 h5labels = h5py.File(stream + '_labels_' + self.id + '.h5', 'r')
                 all_features = h5features[self.features_key]
                 all_labels = np.asarray(h5labels[self.labels_key])
-                
+
                 X_train = np.empty(shape=(0,4096), dtype=int)
                 y_train = np.empty(shape=(0,1), dtype=int)
                 X_test = np.empty(shape=(0,4096), dtype=int)
@@ -309,7 +309,7 @@ class Train:
                     y_train = np.concatenate((y_train, all_labels[labels[i], ...][train_index_label[i], ...]))
                     X_test = np.concatenate((X_test, all_features[labels[i], ...][test_index_label[i], ...]))
                     y_test = np.concatenate((y_test, all_labels[labels[i], ...][test_index_label[i], ...]))
-                
+
                 # Balance the number of positive and negative samples so that there is the same amount of each of them
                 all_ = []
                 len_min = float("inf")
@@ -322,7 +322,7 @@ class Train:
                         ind_min = i
                         len_min = len(all_[-1])
 
-                
+
                 for i in range(len(self.classes)):
                     all_[i] = np.random.choice(all_[i], len_min, replace=False)
 
@@ -334,36 +334,39 @@ class Train:
                 X_train = X_train[allin,...]
                 y_train = y_train[allin]
 
-                
+
                 classifier = self.set_classifier_vgg16()
                 class_weight = dict()
 
+                print('LA VEM O MODELO')
+                print(classifier.summary())
+
                 for i in range(len(self.classes)):
                     class_weight[i] = 1
-                
+
                 # Batch training
                 if self.mini_batch_size == 0:
-                    history = classifier.fit(X_train, to_categorical(y_train), 
-                            validation_data=(X_test, to_categorical(y_test)), 
-                            batch_size=X_train.shape[0], epochs=self.epochs, 
+                    history = classifier.fit(X_train, to_categorical(y_train),
+                            validation_data=(X_test, to_categorical(y_test)),
+                            batch_size=X_train.shape[0], epochs=self.epochs,
                             shuffle='batch', class_weight=class_weight)
                 else:
-                    history = classifier.fit(X_train, to_categorical(y_train), 
-                            validation_data=(X_test, to_categorical(y_test)), 
-                            batch_size=self.mini_batch_size, nb_epoch=self.epochs, 
+                    history = classifier.fit(X_train, to_categorical(y_train),
+                            validation_data=(X_test, to_categorical(y_test)),
+                            batch_size=self.mini_batch_size, nb_epoch=self.epochs,
                             shuffle=True, class_weight=class_weight, verbose=2)
 
                 exp = 'lr{}_batchs{}_batchnorm{}_w0_{}'.format(self.learning_rate, self.mini_batch_size, self.batch_norm, self.weight_0)
-                self.plot_training_info(exp, ['accuracy', 'loss'], True, 
+                self.plot_training_info(exp, ['accuracy', 'loss'], True,
                                    history.history)
 
                 classifier.save(stream + '_classifier_' + self.id + '.h5')
                 h5features.close()
                 h5labels.close()
-            
+
             test_predicteds = dict()
             train_predicteds = dict()
-            
+
             for comb in streams_combinations:
                 key = ''.join(comb)
                 test_predicteds[key] = []
@@ -395,7 +398,7 @@ class Train:
                     if len(all_[-1]) < len_min:
                         ind_min = i
                         len_min = len(all_[-1])
-                
+
                 for i in range(len(self.classes)):
                     all_[i] = np.random.choice(all_[i], len_min, replace=False)
 
@@ -420,7 +423,7 @@ class Train:
 
                 test_predicted = np.asarray(test_predicted)
                 train_predicted = np.asarray(train_predicted)
-                
+
                 for key in list(test_predicteds.keys()):
                     if stream in key:
                         test_predicteds[key].append(test_predicted)
@@ -431,9 +434,9 @@ class Train:
 
             for key in list(test_predicteds.keys()):
                 print('########## TESTS WITH  ' + ''.join(key))
-                self.calc_metrics(self.num_streams[key], y_test, y_train, 
+                self.calc_metrics(self.num_streams[key], y_test, y_train,
                         test_predicteds[key], train_predicteds[key], key)
-       
+
         h5features_start.close()
         h5labels_start.close()
         sensitivities_best = dict()
@@ -453,7 +456,7 @@ class Train:
             fars_best[key] = []
             mdrs_best[key] = []
 
-            best_acc[key] = -1 
+            best_acc[key] = -1
             v[key] = -1
 
         sensitivities_final = []
@@ -507,7 +510,7 @@ class Train:
             if best_acc[key] > final_acc:
                 final_acc = best_acc[key]
                 final = key
-        
+
             self.print_result('3-stream AVG', self.sensitivities_avg[key], self.specificities_avg[key], self.fars_avg[key], self.mdrs_avg[key], self.accuracies_avg[key])
             self.print_result('3-stream AVG_SVM', self.sensitivities_avg_svm[key], self.specificities_avg_svm[key], self.fars_avg_svm[key], self.mdrs_avg_svm[key], self.accuracies_avg_svm[key])
             self.print_result('3-stream SVM', self.sensitivities_svm[key], self.specificities_svm[key], self.fars_svm[key], self.mdrs_svm[key], self.accuracies_svm[key])
@@ -558,7 +561,7 @@ class Train:
                     c_fall += tam
                 train_videos[0].append(j)
 
-        start += all_num[0][0] 
+        start += all_num[0][0]
         for i in range(1, len(all_num)):
             for j in range(int(all_num[i][0] * test_size)):
 
@@ -573,22 +576,22 @@ class Train:
                     if j != 0:
                         tam = len(list(range(all_s[j-1][0], all_s[j][0])))
                         if i != 0:
-                            c_nfall += tam 
+                            c_nfall += tam
                     else:
                         tam = len(list(range(0, all_s[j][0])))
                         if i != 0:
                             c_nfall += tam
 
                     train_videos[i].append(j)
-                    
+
                     if c_nfall >= 100*c_fall:
                         break
-                    
+
             start += all_num[i][0]
 
         s.close()
         num.close()
-        
+
         return train_videos, test_videos
 
     def video_random_split(self, stream, train_videos, test_videos):
@@ -601,7 +604,7 @@ class Train:
         all_l = np.asarray(l[self.labels_key])
         num = h5py.File(stream + '_num_' + self.id + '.h5', 'r')
         all_num = np.asarray(num[self.num_key])
-        
+
         X_train = []
         X_test = []
         y_train = []
@@ -610,7 +613,7 @@ class Train:
         # For every class
         c_test = 0
         c_train = 0
-        
+
         for video in range(1, len(all_s)):
             all_s[video] += all_s[video-1]
 
@@ -627,7 +630,7 @@ class Train:
                     X_test[c_test:c_test+tam] = all_f[0:all_s[video][0]]
                     y_test[c_test:c_test+tam] = all_l[0:all_s[video][0]]
                 c_test+=tam
-                
+
             # Pass through traint_videos from c-th class
             for video in train_videos[c]:
                 if video != 0:
@@ -685,7 +688,7 @@ class Train:
         accuracy = accuracy_score(_y2, predicted)
 
         print('TP: {}, TN: {}, FP: {}, FN: {}'.format(tp,tn,fp,fn))
-        print('TPR: {}, TNR: {}, FPR: {}, FNR: {}'.format(tpr,tnr,fpr,fnr))   
+        print('TPR: {}, TNR: {}, FPR: {}, FNR: {}'.format(tpr,tnr,fpr,fnr))
         print('Sensitivity/Recall: {}'.format(recall))
         print('Specificity: {}'.format(specificity))
         print('Precision: {}'.format(precision))
@@ -699,20 +702,20 @@ class Train:
         extracted_features = Input(shape=(self.num_features,), dtype='float32',
                                    name='input')
         if self.batch_norm:
-            x = BatchNormalization(axis=-1, momentum=0.99, 
+            x = BatchNormalization(axis=-1, momentum=0.99,
                                    epsilon=0.001)(extracted_features)
             x = Activation('relu')(x)
         else:
             x = ELU(alpha=1.0)(extracted_features)
-       
+
         x = Dropout(0.9)(x)
         x = Dense(1, name='predictions', kernel_initializer='glorot_uniform')(x)
         x = Activation('sigmoid')(x)
 
-        adam = Adam(lr=self.learning_rate, beta_1=0.9, beta_2=0.999, 
+        adam = Adam(lr=self.learning_rate, beta_1=0.9, beta_2=0.999,
                     epsilon=1e-08, decay=0.0005)
 
-        classifier = Model(input=extracted_features, output=x, 
+        classifier = Model(input=extracted_features, output=x,
                            name='classifier')
         classifier.compile(optimizer=adam, loss='binary_crossentropy',
                            metrics=['accuracy'])
@@ -723,14 +726,14 @@ class Train:
         extracted_features = Input(shape=(self.num_features,), dtype='float32',
                                    name='input')
         if self.batch_norm:
-            x = BatchNormalization(axis=-1, momentum=0.99, 
+            x = BatchNormalization(axis=-1, momentum=0.99,
                                    epsilon=0.001)(extracted_features)
             x = Activation('relu')(x)
         else:
             x = ELU(alpha=1.0)(extracted_features)
-       
+
         x = Dropout(0.9)(x)
-        x = Dense(self.num_features, name='fc2', 
+        x = Dense(self.num_features, name='fc2',
                   kernel_initializer='glorot_uniform')(x)
         if self.batch_norm:
             x = BatchNormalization(axis=-1, momentum=0.99, epsilon=0.001)(x)
@@ -738,11 +741,11 @@ class Train:
         else:
             x = ELU(alpha=1.0)(x)
         x = Dropout(0.8)(x)
-        x = Dense(self.num_classes, name='predictions', 
+        x = Dense(self.num_classes, name='predictions',
                   kernel_initializer='glorot_uniform')(x)
         x = Activation('softmax')(x)
-        
-        adam = Adam(lr=self.learning_rate, beta_1=0.9, beta_2=0.999, 
+
+        adam = Adam(lr=self.learning_rate, beta_1=0.9, beta_2=0.999,
                     epsilon=1e-08, decay=0.0005)
 
         classifier = Model(name="classifier", inputs=extracted_features, outputs=x)
@@ -761,7 +764,7 @@ class Train:
         * history: History object returned by the Keras fit function.
         '''
         plt.ioff()
-        if 'accuracy' in metrics:     
+        if 'accuracy' in metrics:
             fig = plt.figure()
             plt.plot(history['acc'])
             plt.plot(history['val_acc'])
@@ -803,7 +806,7 @@ if __name__ == '__main__':
     print("For a simple training -nsplits flag isn't used.", file = sys.stderr)
     print("For a cross-training set -nsplits <k>, with k beeing the", file=sys.stderr)
     print("number of folders you want to split up your data.", file=sys.stderr)
-    print("***********************************************************", 
+    print("***********************************************************",
             file=sys.stderr)
 
     argp = argparse.ArgumentParser(description='Do training tasks')
@@ -821,7 +824,7 @@ if __name__ == '__main__':
     argp.add_argument("-streams", dest='streams', type=str, nargs='+',
             help='Usage: -streams spatial temporal (to use 2 streams example)',
             required=True)
-    argp.add_argument("-class", dest='classes', type=str, nargs='+', 
+    argp.add_argument("-class", dest='classes', type=str, nargs='+',
             help='Usage: -class <class0_name> <class1_name>..<n-th_class_name>',
             required=True)
     argp.add_argument("-thresh", dest='thresh', type=float, nargs=1,
@@ -835,11 +838,11 @@ if __name__ == '__main__':
     argp.add_argument("-mini_batch", dest='mini_batch', type=int, nargs=1,
             help='Usage: -mini_batch <mini_batch_size>', required=True)
     argp.add_argument("-id", dest='id', type=str, nargs=1,
-        help='Usage: -id <identifier_to_this_features_and_classifier>', 
+        help='Usage: -id <identifier_to_this_features_and_classifier>',
         required=True)
     argp.add_argument("-batch_norm", dest='batch_norm', type=bool, nargs=1,
         help='Usage: -batch_norm <True/False>', required=True)
-    argp.add_argument("-nsplits", dest='nsplits', type=int, nargs=1, 
+    argp.add_argument("-nsplits", dest='nsplits', type=int, nargs=1,
     help='Usage: -nsplits <K: many splits you want (>1)>', required=True)
 
     try:
@@ -848,7 +851,7 @@ if __name__ == '__main__':
         argp.print_help(sys.stderr)
         exit(1)
 
-    train = Train(args.thresh[0], args.ep[0], args.lr[0], args.classes, 
+    train = Train(args.thresh[0], args.ep[0], args.lr[0], args.classes,
             args.w0[0], args.mini_batch[0], args.id[0], args.batch_norm[0])
 
     args.streams.sort()
