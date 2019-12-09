@@ -252,6 +252,7 @@ class Fextractor:
         number = 0
         cont = 0
 
+        print(extractor_model.summary())
         print("### Extracting Features", flush=True)
         for folder, dir, classe in zip(self.folders, dirs, self.class_value):
             self.update_progress(cont/self.nb_total_data)

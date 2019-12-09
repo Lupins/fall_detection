@@ -888,6 +888,8 @@ class Train:
         classifier.compile(optimizer=adam, loss='categorical_crossentropy',
                            metrics=['accuracy'])
 
+        print('THIS IS THE MODEL')
+        print(classifier.summary())
         return classifier
 
     def plot_training_info(self, case, metrics, save, history):
