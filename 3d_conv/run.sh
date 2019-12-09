@@ -1,1 +1,1 @@
-python npy_creator.py -dataset /home/leite/Workspace/datasets/URFD/ -classes Falls NotFalls -streams saliency pose -ext .mp4
+python npy_creator.py -dataset /mnt/Data/leite/URFD/cp-train/ -classes Falls NotFalls -streams saliency pose frame ritmo flow_z

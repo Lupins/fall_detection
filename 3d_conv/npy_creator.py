@@ -3,23 +3,21 @@ import numpy as np
 import cv2
 import glob
 
-DATA = None
-CLASS = None
-EXT = None
+
 class Npy:
-    def __init__(self, dataset, classes, streams, ext):
+    def __init__(self, dataset, classes, streams):
         self.dataset = dataset
 
         self.classes = classes
         print(type(streams), streams)
         self.streams = streams
-        self.ext = ext
 
         return
 
 
     def process(self):
         self.process_classes()
+
 
     def process_classes(self):
 
@@ -44,7 +42,7 @@ class Npy:
         stack_idx = 0
         stack = np.zeros((24, 224, 224, 3))
         for frame in frames:
-            
+
             img = cv2.imread(frame)
             stack[idx] = img
             idx += 1
@@ -63,12 +61,11 @@ def argument_setup():
     parser.add_argument('-dataset', type=str, help='Dataset folder')
     parser.add_argument('-classes', type=str, nargs='*', help='Classes of the dataset')
     parser.add_argument('-streams', type=str, nargs='*', help='Streams to use')
-    parser.add_argument('-ext', type=str, help='Extension of the video file')
 
     return parser.parse_args()
 
 
 args = argument_setup()
-npy = Npy(args.dataset, args.classes, args.streams, args.ext)
+npy = Npy(args.dataset, args.classes, args.streams)
 
 npy.process()
