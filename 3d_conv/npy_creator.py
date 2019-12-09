@@ -4,6 +4,10 @@ import cv2
 import glob
 
 
+# TODO This code generates some files like: adl*.npy, don't know why, but,
+# after executing this it is wise to run rm -rf /data/train/**/adl*.npy
+
+
 class Npy:
     def __init__(self, dataset, classes, streams):
         self.dataset = dataset
