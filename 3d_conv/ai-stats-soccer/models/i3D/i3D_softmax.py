@@ -1,6 +1,6 @@
 """Script for creating Inception-v1 Inflated 3D ConvNet model with softmax output"""
 
-from .i3D_base import Inception_Inflated3d
+from i3D_base import Inception_Inflated3d
 from keras.layers import Reshape
 from keras.layers import Dense
 from keras.models import Model
