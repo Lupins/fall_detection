@@ -27,9 +27,10 @@ from .i3D_softmax import import_model
 
 class DataGenerator(keras.utils.Sequence):
     'Generates data for Keras'
-    def __init__(self, dataframe, folder, batch_size, train_class=False, start_idx = 0, end_idx = 24, norm = 'div', file_prefix = '', load_before=False, aug=False, dim=(24, 224, 224, 3), n_classes=11, shuffle=False):
+    def __init__(self, dataframe, stream, folder, batch_size, train_class=False, start_idx = 0, end_idx = 24, norm = 'div', file_prefix = '', load_before=False, aug=False, dim=(24, 224, 224, 3), n_classes=11, shuffle=False):
         'Initialization'
         self.dataframe = dataframe
+        self.stream = stream
         self.folder = folder
         self.load_before = load_before
         self.start_idx = start_idx
@@ -38,7 +39,9 @@ class DataGenerator(keras.utils.Sequence):
         self.norm = norm
         self.file_prefix = file_prefix
         self.filenames = pd.Series(glob2.glob(self.folder + '**/*.npy'))
-        
+
+        self.dataframe = [self.dataframe['stream'] == self.stream]
+
         if self.train_class != False:
             true_values = np.zeros(len(self.dataframe), dtype=bool)
             if type(self.train_class) == list:
@@ -103,43 +106,46 @@ class DataGenerator(keras.utils.Sequence):
 
 #         Generate data
         X, y = self.__data_generation(batch_indexes)
-        
-        if self.aug==True:
+
+        if self.aug:
             X = self.__apply_aug(X.astype(np.uint8))
-            
+
         if self.norm == 'div':
             X = X/255
-        
+
         return X, y
 
     def on_epoch_end(self):
         'Updates indexes after each epoch'
         self.indexes = np.arange(len(self.dataframe))
-        if self.shuffle == True:
+        if self.shuffle:
             np.random.shuffle(self.indexes)
-            
+
     def __data_generation(self, batch_indexes):
         'Generates data containing batch_size samples'
-        if self.load_before == True:
+
+        if self.load_before:
+
             return self.X_rgb[batch_indexes], self.y[batch_indexes]
         else:
+
             X = np.empty(shape=(self.batch_size, *self.dim))
             y = np.empty(shape=(self.batch_size, self.n_classes))
-            list_IDs_temp = [self.dataframe.iloc[idx].name for idx in batch_indexes]
+            list_IDs_temp = [self.dataframe.iloc[idx].video_name for idx in batch_indexes]
+
             for i, ID in enumerate(list_IDs_temp):
-                video = str(self.dataframe['video'].loc[ID])
-                start = str(self.dataframe['start'].loc[ID])
-                end = str(self.dataframe['end'].loc[ID])
-                filename = self.file_prefix + video + '_' + start + '_' + end + '.npy'
-                frame = np.load(self.filenames[self.filenames.str.endswith(filename)].iloc[0], allow_pickle=True).astype(float)[self.start_idx:self.end_idx]
+
+                filename = str(self.dataframe['path'].loc[ID])
+                frame = np.load(filename, allow_pickle=True).astype(float)[self.start_idx:self.end_idx]
 
                 # Store sample
                 X[i] = frame
-                
+
                 # Store class
-                y[i] = self.labels.loc[ID]
-            
+                y[i] = int(self.dataframe['class'].loc[ID])
+
             return X, y
+
 
 if __name__ == "__main__":
 
