@@ -198,6 +198,7 @@ if __name__ == "__main__":
 
     y_true = np.array(pd.get_dummies(train_rows))
     print(type(y_true), y_true)
+
     false, true = np.sum(y_true, axis=0)
     total = false + true
 
