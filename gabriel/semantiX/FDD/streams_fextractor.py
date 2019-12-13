@@ -194,7 +194,7 @@ class Fextractor:
         elif stream == 'depth':
             file_name = '/depth_*.jpg'
         elif stream == 'saliency':
-            file_name = '/saliency_*.png'
+            file_name = '/saliency_*'
         else:
             print("INVALID STREAM ERROR")
             print("VALIDS STREAMS: {temporal, spatial, pose, ritmo, depth, saliency}")

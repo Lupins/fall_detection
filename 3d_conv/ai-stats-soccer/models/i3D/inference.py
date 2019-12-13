@@ -10,15 +10,15 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 def main(input_path, model_path):
-    
+
     model = load_model(model_path, custom_objects={"binary_precision":keras_metrics.binary_precision(), "binary_recall":keras_metrics.binary_recall()})
-    
+
     allowed_filetypes = ['.avi', '.wmv', '.mpg', '.mov', '.mp4', '.mkv', '.3gp', '.webm', '.ogv']
     videos_path = []
 
     if os.path.isfile(input_path) and input_path.lower().endswith(tuple(allowed_filetypes)):
         videos_path = [input_path]
-        
+
     elif os.path.isdir(input_path):
         search_path = os.path.join(input_path, '**')
         for ext in allowed_filetypes:

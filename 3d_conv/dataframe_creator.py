@@ -3,6 +3,7 @@ import os
 import glob
 import pandas as pd
 
+# python dataframe_creator.py -output /mnt/Data/leite/URFD/ -section train -dataset /mnt/Data/leite/URFD/train/ -classes Falls NotFalls
 
 def argument_setup():
     parser = ap.ArgumentParser(description='Create dataframes for .npy files')
@@ -27,11 +28,7 @@ for c_class in args.classes:
 
         npy_idx = row.split('/')[-1].split('_')[-1].split('.')[0]
 
-        i_class = -1
-        if c_class == 'Falls':
-            i_class = 0
-        else:
-            i_class = 1
+        i_class = c_class
 
         data.append([i_class, video_name, stream, npy_idx, row])
 

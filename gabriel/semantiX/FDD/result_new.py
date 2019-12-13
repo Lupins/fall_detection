@@ -8,7 +8,7 @@ from sklearn.metrics import confusion_matrix, accuracy_score
 from sklearn.metrics import confusion_matrix, accuracy_score, matthews_corrcoef, \
                             classification_report
 from keras.layers import Input, Activation, Dense, Dropout
-from keras.layers.normalization import BatchNormalization 
+from keras.layers.normalization import BatchNormalization
 from keras.optimizers import Adam
 from keras.models import Model, load_model
 from keras.layers.advanced_activations import ELU
@@ -16,15 +16,15 @@ import matplotlib
 matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 
-''' This code is based on Núñez-Marcos, A., Azkune, G., & Arganda-Carreras, 
+''' This code is based on Núñez-Marcos, A., Azkune, G., & Arganda-Carreras,
     I. (2017). "Vision-Based Fall Detection with Convolutional Neural Networks"
     Wireless Communications and Mobile Computing, 2017.
-    Also, new features were added by Gabriel Pellegrino Silva working in 
-    Semantix. 
+    Also, new features were added by Gabriel Pellegrino Silva working in
+    Semantix.
 '''
 
 ''' Documentation: class Result
-    
+
     This class has a few methods:
 
     pre_result
@@ -42,7 +42,7 @@ class Result:
 
     def __init__(self, streams, classes, fid, cid):
 
-        self.features_key = 'features' 
+        self.features_key = 'features'
         self.labels_key = 'labels'
         self.samples_key = 'samples'
         self.num_key = 'num'
@@ -67,7 +67,7 @@ class Result:
         self.all_labels = np.asarray(h5labels[self.labels_key])
 
         predicteds = []
-        
+
         for data in self.all_features:
             pred = self.classifier.predict(np.asarray(data.reshape(1, -1)))
             pred = pred.flatten()
@@ -109,16 +109,16 @@ class Result:
             X, Y, predicted = self.pre_result(stream)
             len_STACK = len(Y)
             Truth = Y
-            predicteds.append(np.copy(predicted)) 
+            predicteds.append(np.copy(predicted))
 
         predicteds = np.asarray(predicteds)
         cont_predicteds = np.zeros(shape=(len_STACK, len(self.classes)), dtype=np.float)
-                   
+
         if f_classif == 'max_avg':
             for j in range(len_STACK):
                 for i in range(len(self.streams)):
                     for k in range(len(self.classes)):
-                        cont_predicteds[j][k] += (predicteds[i][j][k] / len(self.streams)) 
+                        cont_predicteds[j][k] += (predicteds[i][j][k] / len(self.streams))
 
             cont_predicteds = self.evaluate_max(Truth, cont_predicteds)
 
@@ -126,13 +126,19 @@ class Result:
             for j in range(len_STACK):
                 for i in range(len(self.streams)):
                     for k in range(len(self.classes)):
-                        cont_predicteds[j][k] += (predicteds[i][j][k] / len(self.streams)) 
+                        cont_predicteds[j][k] += (predicteds[i][j][k] / len(self.streams))
 
             clf = joblib.load('svm_avg_' + key + '.pkl')
             print('EVALUATE WITH average and svm')
+            print('avg SVM input')
+            print(cont_predicteds.shape)
             cont_predicteds = clf.predict(cont_predicteds)
+            print('avg SVM output')
+            print(cont_predicteds.shape)
 
             cont_predicteds = self.evaluate(Truth, cont_predicteds)
+            print('avm SVM FINAL')
+            print(cont_predicteds.shape)
 
         elif f_classif == 'svm_1':
 
@@ -140,16 +146,27 @@ class Result:
             for i in range(len(self.streams)):
                 aux_svm = joblib.load('svm_' + self.streams[i] + '_1_aux.pkl')
 
+                print('1 SVM input')
+                print(predicteds[i].shape)
+                print('predicteds: ', predicteds.shape)
+                print('one predicted: ', predicteds[i][0])
                 svm_cont_1_test_predicteds.append(aux_svm.predict(predicteds[i]))
+                print('1 SVM output')
+                print(len(svm_cont_1_test_predicteds))
+                print(svm_cont_1_test_predicteds[i].shape)
 
             svm_cont_1_test_predicteds = np.asarray(svm_cont_1_test_predicteds)
             svm_cont_1_test_predicteds = np.reshape(svm_cont_1_test_predicteds, svm_cont_1_test_predicteds.shape[::-1])
 
             clf = joblib.load('svm_' + key + '_cont_1.pkl')
             print('EVALUATE WITH continuous values and SVM 1')
-            cont_predicteds = clf.predict(svm_cont_1_test_predicteds) 
+            cont_predicteds = clf.predict(svm_cont_1_test_predicteds)
 
             cont_predicteds = self.evaluate(Truth, cont_predicteds)
+            print('1 SVM FINAL')
+            print(cont_predicteds.shape)
+            print(cont_predicteds[0].shape)
+            print(cont_predicteds[1].shape)
 
         elif f_classif == 'svm_2':
             clf = joblib.load('svm_' + key + '_cont_2.pkl')
@@ -158,14 +175,14 @@ class Result:
             svm_cont_2_test_predicteds = svm_cont_2_test_predicteds.reshape(len(Truth), len(self.classes) * len(self.streams))
 
             print('EVALUATE WITH continuous values and SVM 2')
-            cont_predicteds = clf.predict(svm_cont_2_test_predicteds) 
-            
+            cont_predicteds = clf.predict(svm_cont_2_test_predicteds)
+
             cont_predicteds = self.evaluate(Truth, cont_predicteds)
 
         else:
             print("FUNCAO CLASSIFICADORA INVALIDA!!!!")
             return
-        
+
         self.check_videos(Truth, cont_predicteds, self.streams[0])
 
     def check_videos(self, _y2, predicted, stream):
@@ -181,7 +198,7 @@ class Result:
         all_num = [y for x in all_num for y in x]
         for amount_videos in all_num:
             cl = self.classes[class_c]
-            message = '###### ' + cl + ' videos ' + str(amount_videos)+' ######' 
+            message = '###### ' + cl + ' videos ' + str(amount_videos)+' ######'
             print(message)
             for num_video in range(amount_videos):
                 num_miss = 0
@@ -197,7 +214,7 @@ class Result:
                         else:
                             FP += 1
                         num_miss+=1
-                    
+
                 if num_miss == 0:
                     print("Hit video    %3d  [%5d miss  %5d stacks  %5d FP  %5d FN]" %(num_video+1, num_miss, all_samples[video_c+num_video][0], FP, FN))
                 else:
@@ -225,20 +242,20 @@ if __name__ == '__main__':
             file=sys.stderr)
 
     argp = argparse.ArgumentParser(description='Do result  tasks')
-    argp.add_argument("-class", dest='classes', type=str, nargs='+', 
+    argp.add_argument("-class", dest='classes', type=str, nargs='+',
             help='Usage: -class <class0_name> <class1_name>..<n-th_class_name>',
             required=True)
     argp.add_argument("-streams", dest='streams', type=str, nargs='+',
             help='Usage: -streams spatial temporal (to use 2 streams example)',
             required=True)
     argp.add_argument("-fid", dest='fid', type=str, nargs=1,
-        help='Usage: -id <identifier_to_features>', 
+        help='Usage: -id <identifier_to_features>',
         required=True)
     argp.add_argument("-cid", dest='cid', type=str, nargs=1,
-        help='Usage: -id <identifier_to_classifier>', 
+        help='Usage: -id <identifier_to_classifier>',
         required=True)
     argp.add_argument("-f_classif", dest='f_classif', type=str, nargs=1,
-        help='Usage: -f_classif <max_avg> or <svm_avg> or <svm_1> or <svm_2>', 
+        help='Usage: -f_classif <max_avg> or <svm_avg> or <svm_1> or <svm_2>',
         required=True)
 
     try:

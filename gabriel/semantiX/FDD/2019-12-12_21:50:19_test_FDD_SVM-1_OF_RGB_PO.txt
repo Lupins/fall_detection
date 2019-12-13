@@ -1,0 +1,92 @@
+1 SVM input
+(6770, 2)
+1 SVM output
+1
+(6770,)
+EVALUATE WITH continuous values and SVM 1
+Classification report for classifier 
+             precision    recall  f1-score   support
+
+        0.0       0.09      0.95      0.17       336
+        1.0       0.99      0.51      0.67      6434
+
+avg / total       0.95      0.53      0.65      6770
+
+
+Confusion matrix:
+[[ 318   18]
+ [3149 3285]]
+Accuracy: 0.5322008862629247
+Matthews: 0.19856043323313835
+1 SVM FINAL
+(6770,)
+()
+()
+###### Falls videos 21 ######
+Hit video      1  [    0 miss     23 stacks      0 FP      0 FN]
+Miss video     2  [    2 miss     29 stacks      0 FP      2 FN]
+Hit video      3  [    0 miss     23 stacks      0 FP      0 FN]
+Hit video      4  [    0 miss     23 stacks      0 FP      0 FN]
+Miss video     5  [    1 miss     10 stacks      0 FP      1 FN]
+Hit video      6  [    0 miss     36 stacks      0 FP      0 FN]
+Hit video      7  [    0 miss      7 stacks      0 FP      0 FN]
+Hit video      8  [    0 miss      6 stacks      0 FP      0 FN]
+Hit video      9  [    0 miss     33 stacks      0 FP      0 FN]
+Miss video    10  [    1 miss     21 stacks      0 FP      1 FN]
+Miss video    11  [    5 miss     17 stacks      0 FP      5 FN]
+Miss video    12  [    2 miss     24 stacks      0 FP      2 FN]
+Hit video     13  [    0 miss     20 stacks      0 FP      0 FN]
+Miss video    14  [    7 miss     16 stacks      0 FP      7 FN]
+Hit video     15  [    0 miss     11 stacks      0 FP      0 FN]
+Hit video     16  [    0 miss      7 stacks      0 FP      0 FN]
+Hit video     17  [    0 miss     15 stacks      0 FP      0 FN]
+Hit video     18  [    0 miss      5 stacks      0 FP      0 FN]
+Hit video     19  [    0 miss      2 stacks      0 FP      0 FN]
+Hit video     20  [    0 miss      2 stacks      0 FP      0 FN]
+Hit video     21  [    0 miss      6 stacks      0 FP      0 FN]
+###### NotFalls videos 45 ######
+Miss video     1  [   66 miss     66 stacks     66 FP      0 FN]
+Miss video     2  [   32 miss     32 stacks     32 FP      0 FN]
+Miss video     3  [    9 miss      9 stacks      9 FP      0 FN]
+Miss video     4  [   10 miss     86 stacks     10 FP      0 FN]
+Miss video     5  [  118 miss    118 stacks    118 FP      0 FN]
+Hit video      6  [    0 miss    144 stacks      0 FP      0 FN]
+Miss video     7  [   78 miss     78 stacks     78 FP      0 FN]
+Miss video     8  [    2 miss    187 stacks      2 FP      0 FN]
+Miss video     9  [   14 miss    153 stacks     14 FP      0 FN]
+Miss video    10  [    6 miss     49 stacks      6 FP      0 FN]
+Miss video    11  [   65 miss     65 stacks     65 FP      0 FN]
+Hit video     12  [    0 miss     90 stacks      0 FP      0 FN]
+Miss video    13  [   75 miss     75 stacks     75 FP      0 FN]
+Miss video    14  [   60 miss     60 stacks     60 FP      0 FN]
+Miss video    15  [   68 miss     68 stacks     68 FP      0 FN]
+Miss video    16  [   60 miss     60 stacks     60 FP      0 FN]
+Miss video    17  [   83 miss     83 stacks     83 FP      0 FN]
+Miss video    18  [  104 miss    586 stacks    104 FP      0 FN]
+Miss video    19  [    3 miss    127 stacks      3 FP      0 FN]
+Miss video    20  [  106 miss    337 stacks    106 FP      0 FN]
+Miss video    21  [  258 miss    829 stacks    258 FP      0 FN]
+Miss video    22  [   89 miss     89 stacks     89 FP      0 FN]
+Miss video    23  [   71 miss    110 stacks     71 FP      0 FN]
+Miss video    24  [   73 miss    106 stacks     73 FP      0 FN]
+Miss video    25  [   41 miss     41 stacks     41 FP      0 FN]
+Miss video    26  [  120 miss    127 stacks    120 FP      0 FN]
+Miss video    27  [  151 miss    160 stacks    151 FP      0 FN]
+Miss video    28  [   43 miss     43 stacks     43 FP      0 FN]
+Miss video    29  [  176 miss    176 stacks    176 FP      0 FN]
+Miss video    30  [   54 miss     54 stacks     54 FP      0 FN]
+Miss video    31  [  144 miss    144 stacks    144 FP      0 FN]
+Miss video    32  [   95 miss    119 stacks     95 FP      0 FN]
+Miss video    33  [   69 miss     69 stacks     69 FP      0 FN]
+Miss video    34  [   39 miss     39 stacks     39 FP      0 FN]
+Miss video    35  [   21 miss    120 stacks     21 FP      0 FN]
+Miss video    36  [  106 miss    158 stacks    106 FP      0 FN]
+Miss video    37  [  123 miss    190 stacks    123 FP      0 FN]
+Miss video    38  [   57 miss     77 stacks     57 FP      0 FN]
+Miss video    39  [   82 miss     82 stacks     82 FP      0 FN]
+Miss video    40  [   34 miss    126 stacks     34 FP      0 FN]
+Miss video    41  [   35 miss    182 stacks     35 FP      0 FN]
+Miss video    42  [   30 miss    182 stacks     30 FP      0 FN]
+Miss video    43  [    8 miss    206 stacks      8 FP      0 FN]
+Miss video    44  [  130 miss    278 stacks    130 FP      0 FN]
+Miss video    45  [  141 miss    254 stacks    141 FP      0 FN]

@@ -6,6 +6,10 @@ sys.path.insert(0, "/home/leite/workspace/fall/3d_conv/ai-stats-soccer/models/i3
 # The GPU id to use, usually either "0" or "1";
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
+# THESE ARE SO THAT IT WILL USE ONLY THE CPU, SINCE I AM STILL DEBUGING THIS
+# os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"   # see issue #152
+# os.environ["CUDA_VISIBLE_DEVICES"] = ""
+
 import keras
 import keras.backend as K
 from keras.backend.tensorflow_backend import set_session
@@ -42,7 +46,7 @@ class DataGenerator(keras.utils.Sequence):
         self.file_prefix = file_prefix
         self.filenames = pd.Series(glob2.glob(self.folder + '**/*.npy'))
 
-        self.dataframe = [self.dataframe['stream'] == self.stream]
+        self.dataframe = self.dataframe[self.dataframe['stream'] == self.stream]
 
         if self.train_class != False:
             true_values = np.zeros(len(self.dataframe), dtype=bool)
@@ -103,6 +107,7 @@ class DataGenerator(keras.utils.Sequence):
 
     def __getitem__(self, index):
         'Generate one batch of data'
+
 #         Generate indexes of the batch
         batch_indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
 
@@ -131,9 +136,11 @@ class DataGenerator(keras.utils.Sequence):
             return self.X_rgb[batch_indexes], self.y[batch_indexes]
         else:
 
+
             X = np.empty(shape=(self.batch_size, *self.dim))
             y = np.empty(shape=(self.batch_size, self.n_classes))
-            list_IDs_temp = [self.dataframe.iloc[idx].video_name for idx in batch_indexes]
+            # list_IDs_temp = [self.dataframe.iloc[idx].video_name for idx in batch_indexes]
+            list_IDs_temp = [self.dataframe.iloc[idx].name for idx in batch_indexes]
 
             for i, ID in enumerate(list_IDs_temp):
 
@@ -144,7 +151,7 @@ class DataGenerator(keras.utils.Sequence):
                 X[i] = frame
 
                 # Store class
-                y[i] = int(self.dataframe['class'].loc[ID])
+                y[i] = self.labels.loc[ID]
 
             return X, y
 
@@ -164,7 +171,7 @@ if __name__ == "__main__":
     eval_class = 'Falls'
 
 
-    model = import_model(classes=classes, dim=(24,224,224,3), weight_name='rgb_imagenet_and_kinetics', dropout_prob=0.3)
+    model = import_model(classes=classes, dim=(24,224,224,3), weight_name='rgb_imagenet_and_kinetics', dropout_prob=0.5)
 #     model = import_model(classes=classes, dim=(24,224,224,3), weight_name='rgb_imagenet_and_kinetics')
     #model.load_weights('/home/ubuntu/soccer_videos/conv3d_model/saved_models/best-weights.h5')
 #    parallel_model = multi_gpu_model(model, gpus=2)
@@ -187,24 +194,21 @@ if __name__ == "__main__":
     else:
         train_rows = train_df['class'] == eval_class
 
-    print(type(train_rows), train_rows)
-
 #     Generators
-    validation_generator = DataGenerator(val_df, 'spatial', '/mnt/Data/leite/URFD/validation/', batch_size=batch_size, n_classes=classes)
-    training_generator = DataGenerator(train_df, 'spatial', '/mnt/Data/leite/URFD/train/', aug=True, batch_size=batch_size, n_classes=classes)
+    validation_generator = DataGenerator(val_df, 'frame', '/mnt/Data/leite/URFD/validation/', batch_size=batch_size, n_classes=classes)
+    training_generator = DataGenerator(train_df, 'frame', '/mnt/Data/leite/URFD/train/', aug=True, batch_size=batch_size, n_classes=classes)
 
     train_size = len(train_df)
     validation_size = len(val_df)
 
     y_true = np.array(pd.get_dummies(train_rows))
-    print(type(y_true), y_true)
 
     false, true = np.sum(y_true, axis=0)
     total = false + true
 
     class_weight = {0: round(true/false, 2), 1: 1.}
 
-    model.compile(loss = 'categorical_crossentropy', optimizer = keras.optimizers.Adam(lr=10e-4, epsilon=1e-8), metrics=["categorical_accuracy", keras_metrics.binary_precision(), keras_metrics.binary_recall()])
+    model.compile(loss='categorical_crossentropy', optimizer=keras.optimizers.Adam(lr=10e-5, epsilon=1e-8), metrics=["categorical_accuracy", keras_metrics.binary_precision(), keras_metrics.binary_recall()])
 
     es = tf.keras.callbacks.EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=5)
     checkpoint = ModelCheckpoint('saved_models/best-weights.h5', monitor='val_loss', verbose=1, save_best_only=True, mode='min')
@@ -212,8 +216,8 @@ if __name__ == "__main__":
 
     model.fit_generator(generator=training_generator,
                         validation_data=validation_generator,
-                        epochs = 40,
-                        steps_per_epoch = train_size//batch_size,
+                        epochs=40,
+                        steps_per_epoch=train_size//batch_size,
                         validation_steps=validation_size//batch_size,
                         callbacks=callbacks_list,
                         shuffle=False,

@@ -95,11 +95,12 @@ with tf.device('/GPU:0'):
     start = time.time()
 
     # Make a prediction.
-    prediction_class = sess.run(prediction, feed_dict = {images: [im]})[0]
+    prediction_class = sess.run(prediction, feed_dict={images: [im]})[0]
 
-    print("Prediction class: " + str(prediction_class))  # Should be a doberman, class idx = 237
+    print("Prediction class: " + str(prediction_class))
 
-    # Construct the saliency object. This doesn't yet compute the saliency mask, it just sets up the necessary ops.
+    # Construct the saliency object. This doesn't yet compute the saliency mask,
+    # it just sets up the necessary ops.
     integrated_gradients = saliency.IntegratedGradients(graph, sess, y, images)
 
     # Baseline is a black image.
@@ -108,7 +109,7 @@ with tf.device('/GPU:0'):
 
     # Smoothed mask for integrated gradients will take a while since we are doing nsamples * nsamples computations.
     smoothgrad_integrated_gradients_mask_3d = integrated_gradients.GetSmoothedMask(
-      im, feed_dict = {neuron_selector: prediction_class}, x_steps=20, x_baseline=baseline)
+        im, feed_dict={neuron_selector: prediction_class}, x_steps=20, x_baseline=baseline)
 
     # Call the visualization methods to convert the 3D tensors to 2D grayscale.
     smoothgrad_mask_grayscale = saliency.VisualizeImageGrayscale(smoothgrad_integrated_gradients_mask_3d)
@@ -131,4 +132,7 @@ with tf.device('/GPU:0'):
 
     print('SAVING: ' + path + file_name)
     cv2.imwrite(path + file_name, im)
+    f = open('log_saliency.txt', 'a')
+    f.write(folder[-1] + ';' + file_name + '\n')
+    f.close()
     print('TIME:', end-start)
