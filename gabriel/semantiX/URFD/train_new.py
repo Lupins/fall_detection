@@ -452,14 +452,14 @@ class Train:
                 # Batch training
                 if self.mini_batch_size == 0:
 
-                    early_stopping_history = EarlyStopping(monitor='val_loss', min_delta=0.1, patience=5, verbose=2, mode='min')
+                    early_stopping_history = EarlyStopping(monitor='val_loss', min_delta=0.1, patience=10, verbose=2, mode='min')
                     history = classifier.fit(X_train, to_categorical(y_train),
                             validation_data=(X_test, to_categorical(y_test)),
                             batch_size=X_train.shape[0], epochs=self.epochs,
                             shuffle='batch', class_weight=class_weight,
                             callbacks=[early_stopping_history])
                 else:
-                    early_stopping_history = EarlyStopping(monitor='val_loss', min_delta=0.1, patience=5, verbose=2, mode='min')
+                    early_stopping_history = EarlyStopping(monitor='val_loss', min_delta=0.1, patience=10, verbose=2, mode='min')
                     history = classifier.fit(X_train, to_categorical(y_train),
                             validation_data=(X_test, to_categorical(y_test)),
                             batch_size=self.mini_batch_size, nb_epoch=self.epochs,
