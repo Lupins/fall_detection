@@ -169,6 +169,10 @@ if __name__ == "__main__":
     classes = 2
     # eval_class = ['shot', 'free-kick', 'goal', 'penalty-kick']
     eval_class = 'Falls'
+    # dataset_folder = '/mnt/Data/leite/URFD/'
+    dataset_folder = sys.argv[1]
+    # current_stream = 'frame'
+    current_stream = sys.argv[2]
 
 
     model = import_model(classes=classes, dim=(24,224,224,3), weight_name='rgb_imagenet_and_kinetics', dropout_prob=0.5)
@@ -176,9 +180,9 @@ if __name__ == "__main__":
     #model.load_weights('/home/ubuntu/soccer_videos/conv3d_model/saved_models/best-weights.h5')
 #    parallel_model = multi_gpu_model(model, gpus=2)
 
-    X_train = pd.read_csv('/mnt/Data/leite/URFD/train.csv')
-    X_val = pd.read_csv('/mnt/Data/leite/URFD/validation.csv')
-    X_test = pd.read_csv('/mnt/Data/leite/URFD/test.csv')
+    X_train = pd.read_csv(dataset_folder + 'train.csv')
+    X_val = pd.read_csv(dataset_folder + 'validation.csv')
+    X_test = pd.read_csv(dataset_folder + 'test.csv')
 
     # assert(hashlib.sha256(pd.util.hash_pandas_object(X_train, index=True).values).hexdigest() == '265f71d211c03c5203fa0a0f623d34a7e5242447937a712e1575afed75c69a1a')
     # assert(hashlib.sha256(pd.util.hash_pandas_object(X_val, index=True).values).hexdigest() == 'f23dec4b1a82799725b77d83e655c7e97aff4c28d27b095a69a0af6045147fc2')
@@ -195,8 +199,8 @@ if __name__ == "__main__":
         train_rows = train_df['class'] == eval_class
 
 #     Generators
-    validation_generator = DataGenerator(val_df, 'frame', '/mnt/Data/leite/URFD/validation/', batch_size=batch_size, n_classes=classes)
-    training_generator = DataGenerator(train_df, 'frame', '/mnt/Data/leite/URFD/train/', aug=True, batch_size=batch_size, n_classes=classes)
+    validation_generator = DataGenerator(val_df, current_stream, dataset_folder + 'validation/', batch_size=batch_size, n_classes=classes)
+    training_generator = DataGenerator(train_df, current_stream, dataset_folder + 'train/', aug=True, batch_size=batch_size, n_classes=classes)
 
     train_size = len(train_df)
     validation_size = len(val_df)
@@ -211,7 +215,7 @@ if __name__ == "__main__":
     model.compile(loss='categorical_crossentropy', optimizer=keras.optimizers.Adam(lr=10e-5, epsilon=1e-8), metrics=["categorical_accuracy", keras_metrics.binary_precision(), keras_metrics.binary_recall()])
 
     es = tf.keras.callbacks.EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=5)
-    checkpoint = ModelCheckpoint('saved_models/best-weights.h5', monitor='val_loss', verbose=1, save_best_only=True, mode='min')
+    checkpoint = ModelCheckpoint('saved_models/' + current_stream + '_best-weights.h5', monitor='val_loss', verbose=1, save_best_only=True, mode='min')
     callbacks_list = [checkpoint, es]
 
     model.fit_generator(generator=training_generator,
