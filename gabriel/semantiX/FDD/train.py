@@ -18,6 +18,7 @@ from keras.optimizers import Adam
 from keras.models import Model, load_model
 from keras.utils import to_categorical
 from keras.layers.advanced_activations import ELU
+from keras.callbacks import EarlyStopping
 from datetime import datetime
 import matplotlib
 import itertools
@@ -158,8 +159,9 @@ class Train:
         for i in range(len(self.classes)):
             class_weight[i] = 1
 
+        early_stop_clf_avg = EarlyStopping(monitor='val_loss', min_delta=0.1, patience=5, verbose=2, mode='min')
         clf_avg = svm.SVC(class_weight=class_weight, gamma='auto')
-        clf_avg.fit(train_avg_predicted.reshape(-1, 1), y_train)
+        clf_avg.fit(train_avg_predicted.reshape(-1, 1), y_train, callbacks=[early_stop_clf_avg])
         for i in range(len(avg_predicted)):
             avg_predicted[i] = clf_avg.predict(avg_predicted[i].reshape(-1, 1))
 
@@ -188,7 +190,8 @@ class Train:
 
         clf_continuous = svm.SVC(class_weight=class_weight, gamma='auto')
 
-        clf_continuous.fit(clf_train_predicteds, y_train)
+        early_stop_clf_continuos = EarlyStopping(monitor='val_loss', min_delta=0.1, patience=5, verbose=2, mode='min')
+        clf_continuous.fit(clf_train_predicteds, y_train, callbacks=[early_stop_clf_continuos])
 
         avg_continuous = np.array(avg_predicted, copy=True)
         avg_train_continuous = np.array(train_avg_predicted, copy=True)
@@ -346,15 +349,17 @@ class Train:
 
                 # Batch training
                 if self.mini_batch_size == 0:
+                    early_stop_history = EarlyStopping(monitor='val_loss', min_delta=0.1, patience=5, verbose=2, mode='min')
                     history = classifier.fit(X_train, to_categorical(y_train),
                             validation_data=(X_test, to_categorical(y_test)),
                             batch_size=X_train.shape[0], epochs=self.epochs,
-                            shuffle='batch', class_weight=class_weight)
+                            shuffle='batch', class_weight=class_weight, callbacks=[early_stop_history])
                 else:
+                    early_stop_history = EarlyStopping(monitor='val_loss', min_delta=0.1, patience=5, verbose=2, mode='min')
                     history = classifier.fit(X_train, to_categorical(y_train),
                             validation_data=(X_test, to_categorical(y_test)),
                             batch_size=self.mini_batch_size, nb_epoch=self.epochs,
-                            shuffle=True, class_weight=class_weight, verbose=2)
+                            shuffle=True, class_weight=class_weight, verbose=2, callbacks=[early_stop_history])
 
                 exp = 'lr{}_batchs{}_batchnorm{}_w0_{}'.format(self.learning_rate, self.mini_batch_size, self.batch_norm, self.weight_0)
                 self.plot_training_info(exp, ['accuracy', 'loss'], True,

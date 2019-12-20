@@ -130,15 +130,9 @@ class Result:
 
             clf = joblib.load('svm_avg_' + key + '.pkl')
             print('EVALUATE WITH average and svm')
-            print('avg SVM input')
-            print(cont_predicteds.shape)
             cont_predicteds = clf.predict(cont_predicteds)
-            print('avg SVM output')
-            print(cont_predicteds.shape)
 
             cont_predicteds = self.evaluate(Truth, cont_predicteds)
-            print('avm SVM FINAL')
-            print(cont_predicteds.shape)
 
         elif f_classif == 'svm_1':
 
@@ -146,14 +140,7 @@ class Result:
             for i in range(len(self.streams)):
                 aux_svm = joblib.load('svm_' + self.streams[i] + '_1_aux.pkl')
 
-                print('1 SVM input')
-                print(predicteds[i].shape)
-                print('predicteds: ', predicteds.shape)
-                print('one predicted: ', predicteds[i][0])
                 svm_cont_1_test_predicteds.append(aux_svm.predict(predicteds[i]))
-                print('1 SVM output')
-                print(len(svm_cont_1_test_predicteds))
-                print(svm_cont_1_test_predicteds[i].shape)
 
             svm_cont_1_test_predicteds = np.asarray(svm_cont_1_test_predicteds)
             svm_cont_1_test_predicteds = np.reshape(svm_cont_1_test_predicteds, svm_cont_1_test_predicteds.shape[::-1])
@@ -163,10 +150,6 @@ class Result:
             cont_predicteds = clf.predict(svm_cont_1_test_predicteds)
 
             cont_predicteds = self.evaluate(Truth, cont_predicteds)
-            print('1 SVM FINAL')
-            print(cont_predicteds.shape)
-            print(cont_predicteds[0].shape)
-            print(cont_predicteds[1].shape)
 
         elif f_classif == 'svm_2':
             clf = joblib.load('svm_' + key + '_cont_2.pkl')
