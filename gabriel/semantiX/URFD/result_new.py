@@ -4,9 +4,7 @@ from sklearn.model_selection import KFold
 from sklearn.externals import joblib
 import numpy as np
 import h5py
-from sklearn.metrics import confusion_matrix, accuracy_score
-from sklearn.metrics import confusion_matrix, accuracy_score, matthews_corrcoef, \
-                            classification_report
+from sklearn.metrics import confusion_matrix, accuracy_score, balanced_accuracy_score, matthews_corrcoef, classification_report
 from keras.layers import Input, Activation, Dense, Dropout
 from keras.layers.normalization import BatchNormalization
 from keras.optimizers import Adam
@@ -94,7 +92,9 @@ class Result:
         cm = confusion_matrix(truth, predicted, labels=[i for i in range(len(self.classes))])
 
         accuracy = accuracy_score(truth, predicted)
+        balanced_accuracy = balanced_accuracy_score(truth, predicted)
         print('Accuracy: {}'.format(accuracy))
+        print('Balanced Accuracy: {}'.format(balanced_accuracy))
         print('Matthews: {}'.format(matthews_corrcoef(truth, predicted)))
 
         return predicted
