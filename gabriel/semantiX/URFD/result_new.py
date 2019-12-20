@@ -139,21 +139,21 @@ class Result:
 
             svm_cont_1_test_predicteds = []
             for i in range(len(self.streams)):
-                aux_svm = joblib.load(self.fold + '_' + 'svm_' + self.streams[i] + '_1_aux.pkl')
+                aux_svm = joblib.load(self.cid + '_' + self.fold + '_' + 'svm_' + self.streams[i] + '_1_aux.pkl')
 
                 svm_cont_1_test_predicteds.append(aux_svm.predict(predicteds[i]))
 
             svm_cont_1_test_predicteds = np.asarray(svm_cont_1_test_predicteds)
             svm_cont_1_test_predicteds = np.reshape(svm_cont_1_test_predicteds, svm_cont_1_test_predicteds.shape[::-1])
 
-            clf = joblib.load(self.fold + '_' + 'svm_' + key + '_cont_1.pkl')
+            clf = joblib.load(self.cid + '_' + self.fold + '_' + 'svm_' + key + '_cont_1.pkl')
             print('EVALUATE WITH continuous values and SVM 1')
             cont_predicteds = clf.predict(svm_cont_1_test_predicteds)
 
             cont_predicteds = self.evaluate(Truth, cont_predicteds)
 
         elif f_classif == 'svm_2':
-            clf = joblib.load(self.fold + '_' + 'svm_' + key + '_cont_2.pkl')
+            clf = joblib.load(self.cid + '_' + self.fold + '_' + 'svm_' + key + '_cont_2.pkl')
 
             svm_cont_2_test_predicteds = np.asarray([list(predicteds[:, i, j]) for i in range(len(Truth)) for j in range(len(self.classes))])
             svm_cont_2_test_predicteds = svm_cont_2_test_predicteds.reshape(len(Truth), len(self.classes) * len(self.streams))

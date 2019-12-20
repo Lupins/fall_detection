@@ -153,7 +153,7 @@ class Train:
 
             svm_cont_1_test_predicteds.append(aux_svm.predict(test_predicteds[i]))
             svm_cont_1_train_predicteds.append(aux_svm.predict(train_predicteds[i]))
-            joblib.dump(aux_svm, str(counter) + '_' + 'svm_' + self.streams[i] + '_1_aux.pkl')
+            joblib.dump(aux_svm, self.id + '_' + str(counter) + '_' + 'svm_' + self.streams[i] + '_1_aux.pkl')
 
         svm_cont_1_test_predicteds = np.asarray(svm_cont_1_test_predicteds)
         svm_cont_1_train_predicteds = np.asarray(svm_cont_1_train_predicteds)
@@ -193,7 +193,7 @@ class Train:
         avg_predicted = clf_avg.predict(avg_predicted)
         train_avg_predicted = clf_avg.predict(train_avg_predicted)
 
-        joblib.dump(clf_avg, str(counter) + '_' + 'svm_avg_' + key + '.pkl')
+        joblib.dump(clf_avg, self.id + '_' + str(counter) + '_' + 'svm_avg_' + key + '.pkl')
 
         del clf_avg
         gc.collect()
@@ -269,7 +269,7 @@ class Train:
         test_2_continuous = clf_continuous.predict(svm_cont_2_test_predicteds)
         train_2_continuous = clf_continuous.predict(svm_cont_2_train_predicteds)
 
-        joblib.dump(clf_continuous, str(counter) + '_' + 'svm_' + key + '_cont_2.pkl')
+        joblib.dump(clf_continuous, self.id + '_' + str(counter) + '_' + 'svm_' + key + '_cont_2.pkl')
         print('EVALUATE WITH continuous values and SVM 2')
         tpr, fpr, fnr, tnr, precision, sensitivity, specificity, f1, accuracy = self.evaluate(test_2_continuous, y_test)
 
@@ -296,7 +296,7 @@ class Train:
         test_1_continuous = clf_continuous.predict(svm_cont_1_test_predicteds)
         train_1_continuous = clf_continuous.predict(svm_cont_1_train_predicteds)
 
-        joblib.dump(clf_continuous, str(counter) + '_' + 'svm_' + key + '_cont_1.pkl')
+        joblib.dump(clf_continuous, self.id + '_' + str(counter) + '_' + 'svm_' + key + '_cont_1.pkl')
         print('EVALUATE WITH continuous values and SVM 1')
         tpr, fpr, fnr, tnr, precision, sensitivity, specificity, f1, accuracy = self.evaluate(test_1_continuous, y_test)
 
