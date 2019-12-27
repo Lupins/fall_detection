@@ -174,6 +174,12 @@ if __name__ == "__main__":
     # current_stream = 'frame'
     current_stream = sys.argv[2]
 
+    augmentation = None
+    if sys.argv[3] == 'true':
+        augmentation = True
+    else:
+        augmentation = False
+
 
     model = import_model(classes=classes, dim=(24,224,224,3), weight_name='rgb_imagenet_and_kinetics', dropout_prob=0.5)
 #     model = import_model(classes=classes, dim=(24,224,224,3), weight_name='rgb_imagenet_and_kinetics')
@@ -200,7 +206,7 @@ if __name__ == "__main__":
 
 #     Generators
     validation_generator = DataGenerator(val_df, current_stream, dataset_folder + 'validation/', batch_size=batch_size, n_classes=classes)
-    training_generator = DataGenerator(train_df, current_stream, dataset_folder + 'train/', aug=True, batch_size=batch_size, n_classes=classes)
+    training_generator = DataGenerator(train_df, current_stream, dataset_folder + 'train/', aug=augmentation, batch_size=batch_size, n_classes=classes)
 
     train_size = len(train_df)
     validation_size = len(val_df)

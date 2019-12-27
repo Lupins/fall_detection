@@ -1,5 +1,5 @@
-python train_i3D.py /mnt/Data/leite/URFD/ flow
-python train_i3D.py /mnt/Data/leite/URFD/ frame
-python train_i3D.py /mnt/Data/leite/URFD/ pose
-python train_i3D.py /mnt/Data/leite/URFD/ ritmo
-python train_i3D.py /mnt/Data/leite/URFD/ saliency
+python train_i3D.py /mnt/Data/leite/URFD/ flow false
+python train_i3D.py /mnt/Data/leite/URFD/ frame true
+python train_i3D.py /mnt/Data/leite/URFD/ pose false
+python train_i3D.py /mnt/Data/leite/URFD/ ritmo false
+python train_i3D.py /mnt/Data/leite/URFD/ saliency false
