@@ -9,3 +9,5 @@ python streams_fextractor.py -data /mnt/Data/leite/URFD/test/ -class Falls NotFa
 python streams_fextractor.py -data /mnt/Data/leite/URFD/test/ -class Falls NotFalls -streams saliency -id URFD-test -ext .avi
 python streams_fextractor.py -data /mnt/Data/leite/URFD/test/ -class Falls NotFalls -streams spatial -id URFD-test -ext .avi
 python streams_fextractor.py -data /mnt/Data/leite/URFD/test/ -class Falls NotFalls -streams temporal -id URFD-test -ext .avi
+
+# echo 'Test pose is done' | mail -s '' guilherme.vieira.leite@gmail.com
