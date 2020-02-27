@@ -4,7 +4,13 @@ from sklearn.model_selection import KFold
 from sklearn.externals import joblib
 import numpy as np
 import h5py
-from sklearn.metrics import confusion_matrix, accuracy_score, balanced_accuracy_score, matthews_corrcoef, classification_report
+
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import balanced_accuracy_score
+from sklearn.metrics import matthews_corrcoef
+from sklearn.metrics import classification_report
+
 from keras.layers import Input, Activation, Dense, Dropout
 from keras.layers.normalization import BatchNormalization
 from keras.optimizers import Adam
@@ -129,7 +135,7 @@ class Result:
                     for k in range(len(self.classes)):
                         cont_predicteds[j][k] += (predicteds[i][j][k] / len(self.streams))
 
-            clf = joblib.load(self.fold + '_' + 'svm_avg_' + key + '.pkl')
+            clf = joblib.load(self.cid + '_' + self.fold + '_' + 'svm_avg_' + key + '.pkl')
             print('EVALUATE WITH average and svm')
             cont_predicteds = clf.predict(cont_predicteds)
 
