@@ -12,6 +12,13 @@ import h5py
 import cv2
 import gc
 
+''' This code is based on Núñez-Marcos, A., Azkune, G., & Arganda-Carreras, 
+    I. (2017). "Vision-Based Fall Detection with Convolutional Neural Networks"
+    Wireless Communications and Mobile Computing, 2017.
+    Also, new features were added by Gabriel Pellegrino Silva working in 
+    Semantix. 
+'''
+
 ''' Documentation: class Fextractor
 
     As the code present in multi-stream-vgg16.py, this code has a lot of auto-
@@ -20,7 +27,7 @@ import gc
     Also, the files need to be organized in a proper way. Lets first define
     a few variables.
 
-    -data is passed as argument and contains the path to our data.
+    -data is passed as argument and contains the path to our data. 
 
     In my case, I'm using a folder /mnt/Data/URFD/, so I pass:
 
@@ -28,25 +35,25 @@ import gc
 
     Next, we have -class variable
 
-    Inside /mnt/Data/URFD we have two folders: Falls and NotFalls.
+    Inside /mnt/Data/URFD we have two folders: Falls and NotFalls. 
 
     /mnt/Data/URFD/Falls
     /mnt/Data/URFD/NotFalls
 
-    so,
+    so, 
 
     -class Falls NotFalls
 
-    needs to be passed as argument.
+    needs to be passed as argument. 
 
-    Inside this folders /mnt/Data/URFD/Falls we have many other folders,
+    Inside this folders /mnt/Data/URFD/Falls we have many other folders, 
     each of these folders has a video, the name of this folder, suppose
     video01 contains a video named, for example, video01.mp4.
     Illustrating, /mnt/Data/URFD/Falls/video01 has a file
     /mnt/Data/URFD/Falls/video01/video01.mp4. This video, that not necessarily
-    needs to be in the .mp4 extension, is used by the Data_Extraction
+    needs to be in the .mp4 extension, is used by the Data_Extraction 
     pre-process stage to acquire informations like: optical flow, pose
-    estimation, among others.
+    estimation, among others. 
 
     Now, if our video has n frames, inside this /mnt/Data/URFD/Falls/video01/
     we shall have:
@@ -69,7 +76,7 @@ import gc
     The output feature .h5 file is an array of arrays with num_features elements    each, so, (n, num_features). label .h5 file is an array of arrays with 1
     elements, so, (n, 1). This 1 element is the label of the class, so far,
     it's only possible 10 different classes: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9.
-
+    
 '''
 
 
@@ -79,7 +86,7 @@ class Fextractor:
 
         self.ext = ext
         self.folders = []
-
+        
         self.classes = classes
         self.classes.sort()
         self.classes_dirs = []
@@ -88,12 +95,12 @@ class Fextractor:
         self.class_value = []
         self.data_images = []
         self.data_images_1 = []
-
+        
         # Some constants defined over a lot of classes.
-        self.num_features = 4096    # Number of output of our CNN
+        self.num_features = 4096    # Number of output of our CNN 
         self.x_size = 224           # X image size
-        self.y_size = 224           # Y image size               224x224 pixels
-
+        self.y_size = 224           # Y image size               224x224 pixels 
+        
         self.id = id
         # Total amount of data with sliding window=num_images-sliding_height+1
         self.nb_total_data = 0
@@ -102,30 +109,30 @@ class Fextractor:
 
         print("### Model loading", flush=True)
         extractor_model = load_model(model)
-
-        # This code produces 4 files for each stream.
+        
+        # This code produces 4 files for each stream.  
 
         # features_file contain arrays of size self.num_features. Each array is
-        # the output of VGG16 to a data information and is composed of values
+        # the output of VGG16 to a data information and is composed of values       
         # in the range [0, 1].
 
         # Just to remember, data information is what this stream consider as an
-        # input. RGB streams use a frame, and STACK streams use a stack of frames.
+        # input. RGB streams use a frame, and STACK streams use a stack of frames. 
 
         features_file = stream + '_features_' + self.id  + '.h5'
         labels_file = stream + '_labels_' + self.id  + '.h5'
         samples_file = stream + '_samples_' + self.id  + '.h5'
         num_file = stream + '_num_' + self.id  + '.h5'
 
-        features_key = 'features'
+        features_key = 'features' 
         labels_key = 'labels'
         samples_key = 'samples'
         num_key = 'num'
         sliding_height = 10
 
         '''
-        Function to load the optical flow stacks, do a feed-forward through
-        the feature extractor (VGG16) and store the output feature vectors in
+        Function to load the optical flow stacks, do a feed-forward through 
+        the feature extractor (VGG16) and store the output feature vectors in 
         the file 'features_file' and the labels in 'labels_file'.
         Input:
         * extractor_model: CNN model until the last two layers.
@@ -133,7 +140,7 @@ class Fextractor:
         going to be stored
         * labels_file: path to the hdf5 file where the labels of the features
         are going to be stored
-        * samples_file: path to the hdf5 file where the number of stacks in
+        * samples_file: path to the hdf5 file where the number of stacks in 
         each video is going to be stored
         * num_file: path to the hdf5 file where the number of fall and not fall
         videos are going to be stored
@@ -185,10 +192,10 @@ class Fextractor:
         elif stream == 'depth':
             file_name = '/depth_*.jpg'
         elif stream == 'saliency':
-            file_name = '/saliency*'
+            file_name = '/saliency_*.png'
         else:
             print("INVALID STREAM ERROR")
-            print("VALIDS STREAMS: {temporal, spatial, pose, ritmo, depth, saliency}")
+            print("VALIDS STREAMS: {temporal, spatial, pose, ritmo, depth, saliency}") 
             exit(1)
 
         for c in range(len(self.classes)):
@@ -200,13 +207,13 @@ class Fextractor:
             #        used inside Extracting Features for, setting label value")
             #    exit(1)
 
-            for dir in self.classes_dirs[c]:
-
-                self.data = glob.glob(data_folder + self.classes[c] + '/' +
+            for dir in self.classes_dirs[c]: 
+               
+                self.data = glob.glob(data_folder + self.classes[c] + '/' + 
                                   dir + file_name)
-
+                    
                 # if file_name == 'flow_x_*.jpg'
-                # then
+                # then 
                 #   we have len(self.data) equals to the amount of optical flows
                 #   which is the amount of len(self.data) - 1 for every other
                 #   file_name
@@ -237,26 +244,25 @@ class Fextractor:
                         # amount of data present on temporal sream
                         self.nb_total_data += len(self.data) - sliding_height
 
-        dataset_features = h5features.create_dataset(features_key,
+        dataset_features = h5features.create_dataset(features_key, 
                 shape=(self.nb_total_data, self.num_features), dtype='float64')
-        dataset_labels = h5labels.create_dataset(labels_key,
-                shape=(self.nb_total_data, 1), dtype='float64')
-        dataset_samples = h5samples.create_dataset(samples_key,
-                shape=(len(self.class_value), 1), dtype='int32')
-        dataset_num = h5num_classes.create_dataset(num_key,
-                shape=(len(self.classes), 1), dtype='int32')
-
+        dataset_labels = h5labels.create_dataset(labels_key, 
+                shape=(self.nb_total_data, 1), dtype='float64')  
+        dataset_samples = h5samples.create_dataset(samples_key, 
+                shape=(len(self.class_value), 1), dtype='int32')  
+        dataset_num = h5num_classes.create_dataset(num_key, 
+                shape=(len(self.classes), 1), dtype='int32')  
+        
         for c in range(len(self.classes)):
             dataset_num[c] = num_class[c]
 
         number = 0
         cont = 0
-
-        print(extractor_model.summary())
+        
         print("### Extracting Features", flush=True)
         for folder, dir, classe in zip(self.folders, dirs, self.class_value):
             self.update_progress(cont/self.nb_total_data)
-
+        
             self.data_images = glob.glob(folder + file_name)
             self.data_images.sort()
 
@@ -273,11 +279,11 @@ class Fextractor:
             if stream == 'temporal':
                 nb_datas = len(self.data_images) - sliding_height + 1
             else:
-                # for other streams, data_images already is matched with
+                # for other streams, data_images already is matched with 
                 # temporal
                 nb_datas = len(self.data_images)
 
-            amount_datas = 100
+            amount_datas = 100 
             fraction_datas = nb_datas // amount_datas
 
             iterr = iter(self.data_images)
@@ -285,7 +291,7 @@ class Fextractor:
             for fraction in range(fraction_datas):
 
                 if stream == 'temporal':
-                    flow = np.zeros(shape=(self.x_size, self.y_size, 2*sliding_height,
+                    flow = np.zeros(shape=(self.x_size, self.y_size, 2*sliding_height, 
                                     amount_datas), dtype=np.float64)
 
                     for i in range(amount_datas + sliding_height -1):
@@ -298,8 +304,8 @@ class Fextractor:
                         img_y = cv2.imread(flow_y_file, cv2.IMREAD_GRAYSCALE)
 
                         # Assign an image i to the jth stack in the kth position,
-                        # but also in the j+1th stack in the k+1th position and so
-                        # on (for sliding window)
+                        # but also in the j+1th stack in the k+1th position and so 
+                        # on (for sliding window) 
                         for s in list(reversed(range(min(sliding_height,i+1)))):
                             if i-s < amount_datas:
                                 flow[:,:,2*s,  i-s] = img_x
@@ -307,19 +313,19 @@ class Fextractor:
                         del img_x,img_y
                         gc.collect()
 
-                    # Restore last images from previous fraction to start next
-                    # fraction
+                    # Restore last images from previous fraction to start next 
+                    # fraction    
                     image_c = image_c - sliding_height + 1
-
+                        
                     # Subtract mean
-                    flow = flow - np.tile(flow_mean[...,np.newaxis],
+                    flow = flow - np.tile(flow_mean[...,np.newaxis], 
                             (1, 1, 1, flow.shape[3]))
                     # Transpose for channel ordering (Tensorflow in this case)
-                    flow = np.transpose(flow, (3, 0, 1, 2))
-                    predictions = np.zeros((amount_datas, self.num_features),
+                    flow = np.transpose(flow, (3, 0, 1, 2)) 
+                    predictions = np.zeros((amount_datas, self.num_features), 
                             dtype=np.float64)
                     truth = np.zeros((amount_datas, 1), dtype='int8')
-                    # Process each stack: do the feed-forward pass and store in the
+                    # Process each stack: do the feed-forward pass and store in the 
                     # hdf5 file the output
                     for i in range(amount_datas):
                         prediction = extractor_model.predict(
@@ -328,10 +334,10 @@ class Fextractor:
                         #truth[i] = self.get_media_optflow(label_values, i+(fraction*amount_datas), sliding_height)
                         truth[i] = label
                 else:
-                    predictions = np.zeros((amount_datas, self.num_features),
+                    predictions = np.zeros((amount_datas, self.num_features), 
                             dtype=np.float64)
                     truth = np.zeros((amount_datas, 1), dtype='int8')
-                    # Process each stack: do the feed-forward pass and store in the
+                    # Process each stack: do the feed-forward pass and store in the 
                     # hdf5 file the output
                     for i in range(amount_datas):
                         frame = next(iterr)
@@ -340,18 +346,18 @@ class Fextractor:
                         #truth[i] = label_values[i+fraction*amount_frames]
                         truth[i] = label
 
-
+                
                 dataset_features[cont:cont+amount_datas,:] = predictions
                 dataset_labels[cont:cont+amount_datas,:] = truth
                 cont += amount_datas
 
             amount_datas = nb_datas % amount_datas
-            predictions = np.zeros((amount_datas, self.num_features),
+            predictions = np.zeros((amount_datas, self.num_features), 
                     dtype=np.float64)
             truth = np.zeros((amount_datas, 1), dtype='int8')
 
             if stream == 'temporal':
-                flow = np.zeros(shape=(self.x_size, self.y_size, 2*sliding_height,
+                flow = np.zeros(shape=(self.x_size, self.y_size, 2*sliding_height, 
                                 amount_datas), dtype=np.float64)
 
                 for i in range(amount_datas + sliding_height - 1):
@@ -363,21 +369,21 @@ class Fextractor:
                     img_x = cv2.imread(flow_x_file, cv2.IMREAD_GRAYSCALE)
                     img_y = cv2.imread(flow_y_file, cv2.IMREAD_GRAYSCALE)
                     # Assign an image i to the jth stack in the kth position,
-                    # but also in the j+1th stack in the k+1th position and so on
-                    # (for sliding window)
+                    # but also in the j+1th stack in the k+1th position and so on 
+                    # (for sliding window) 
                     for s in list(reversed(range(min(sliding_height,i+1)))):
                         if i-s < amount_datas:
                             flow[:,:,2*s,  i-s] = img_x
                             flow[:,:,2*s+1,i-s] = img_y
                     del img_x,img_y
                     gc.collect()
-
+                    
                 # Subtract mean
-                flow = flow - np.tile(flow_mean[...,np.newaxis],
+                flow = flow - np.tile(flow_mean[...,np.newaxis], 
                         (1, 1, 1, flow.shape[3]))
                 # Transpose for channel ordering (Tensorflow in this case)
-                flow = np.transpose(flow, (3, 0, 1, 2))
-                # Process each stack: do the feed-forward pass and store in the
+                flow = np.transpose(flow, (3, 0, 1, 2)) 
+                # Process each stack: do the feed-forward pass and store in the 
                 # hdf5 file the output
                 for i in range(amount_datas):
                     prediction = extractor_model.predict(np.expand_dims(flow[i, ...],
@@ -386,7 +392,7 @@ class Fextractor:
                     # this 100 value is related to initial amount_datas
                     truth[i] = label
             else:
-                # Process each stack: do the feed-forward pass and store in the
+                # Process each stack: do the feed-forward pass and store in the 
                 # hdf5 file the output
                 for i in range(amount_datas):
                     frame = next(iterr)
@@ -422,7 +428,7 @@ class Fextractor:
     def get_dirs(self, data_folder):
 
         for c in self.classes:
-            self.classes_dirs.append([f for f in os.listdir(data_folder + c)
+            self.classes_dirs.append([f for f in os.listdir(data_folder + c) 
                         if os.path.isdir(os.path.join(data_folder, c, f))])
             self.classes_dirs[-1].sort()
 
@@ -440,20 +446,20 @@ if __name__ == '__main__':
     print("***********************************************************",
             file=sys.stderr)
     argp = argparse.ArgumentParser(description='Do feature extraction tasks')
-    argp.add_argument("-data", dest='data_folder', type=str, nargs=1,
+    argp.add_argument("-data", dest='data_folder', type=str, nargs=1, 
             help='Usage: -data <path_to_your_data_folder>', required=True)
     argp.add_argument("-streams", dest='streams', type=str, nargs='+',
             help='So far, spatial, temporal, pose and its combinations \
                   Usage: -streams spatial temporal',
             required=True)
-    argp.add_argument("-class", dest='classes', type=str, nargs='+',
+    argp.add_argument("-class", dest='classes', type=str, nargs='+', 
             help='Usage: -class <class0_name> <class1_name>..<n-th_class_name>',
             required=True)
     argp.add_argument("-id", dest='id', type=str, nargs=1,
             help='Usage: -id <identifier_to_this_features>', required=True)
-    argp.add_argument("-ext", dest='ext', type=str, nargs=1,
+    argp.add_argument("-ext", dest='ext', type=str, nargs=1, 
             help='Usage: -ext <file_extension> .mp4 | .avi | ...', required=True)
-
+    
     try:
         args = argp.parse_args()
     except:
